@@ -24,7 +24,7 @@ jobs:
         with:
           gradle-version: 8.9
       - name: "🛠️ Build WasmJS App"
-        run: gradle :composeApp:wasmJsBrowserDistribution
+        run: ./gradlew :composeApp:wasmJsBrowserDistribution
       - name: "📄 Configure GitHub Pages"
         uses: actions/configure-pages@v5
       - name: "📤 Upload GitHub Pages artifact"
@@ -34,4 +34,3 @@ jobs:
       - name: "🚀 Deploy to GitHub Pages"
         id: deployment
         uses: actions/deploy-pages@v4
-
