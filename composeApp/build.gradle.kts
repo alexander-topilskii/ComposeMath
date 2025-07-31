@@ -1,5 +1,8 @@
+@file:OptIn(ExperimentalDistributionDsl::class)
+
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalDistributionDsl
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 
 plugins {
@@ -13,6 +16,9 @@ kotlin {
     wasmJs {
         outputModuleName.set("composeApp")
         browser {
+            distribution {
+                outputDirectory.set(file("build/dist/wasmJs/productionExecutable"))
+            }
             val rootDirPath = project.rootDir.path
             val projectDirPath = project.projectDir.path
             commonWebpackConfig {
@@ -26,7 +32,6 @@ kotlin {
                 }
             }
         }
-        binaries.executable()
     }
     
     sourceSets {
