@@ -18,13 +18,8 @@ import androidx.navigation.compose.rememberNavController
 @Composable
 fun App() {
     MaterialTheme {
-        Column(
-            modifier = Modifier
-                .background(MaterialTheme.colorScheme.primaryContainer)
-                .safeContentPadding()
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
+        // Remove column wrapper since HomeScreen now uses Scaffold
+        // and has its own layout handling
             val navController = rememberNavController()
             NavHost(navController = navController, startDestination = "home") {
                 composable("home") {
@@ -40,6 +35,5 @@ fun App() {
                     FunctionDrawer(modifier = Modifier.fillMaxSize(), onBack = { navController.popBackStack() })
                 }
             }
-        }
     }
 }
