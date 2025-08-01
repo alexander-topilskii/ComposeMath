@@ -42,96 +42,61 @@ import kotlin.math.cos
 import kotlin.math.sin
 
 
-@OptIn(ExperimentalMaterial3Api::class)
+import org.example.project.components.AdaptiveScreen
+
 @Composable
 fun FunctionDrawer(modifier: Modifier, onBack: () -> Unit) {
-    MaterialTheme {
-        val dest = LocalDensity.current
-        var selectedFunction by remember { mutableStateOf("sin(x)") }
-        var scale by remember { mutableStateOf(1f) }
-        var screenWidth by remember { mutableStateOf(0.dp) }
+    var selectedFunction by remember { mutableStateOf("sin(x)") }
+    var scale by remember { mutableStateOf(1f) }
 
-        // Main scaffold
-        Scaffold(
-            modifier = modifier,
-            topBar = {
-                TopAppBar(
-                    navigationIcon = {
-                        IconButton(onClick = onBack) {
-                            Text("←")
-                        }
-                    },
-                    title = { Text("Визуализатор математических функций") },
-                )
-            },
-            content = { padding ->
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(padding)
-                        .onSizeChanged { size ->
-                            with(dest) {
-                                screenWidth = size.width.toDp()
-                            }
-                        },
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    // Determine if mobile-like layout (< 768dp ~ tablets/phones)
-                    val isMobile = screenWidth < 768.dp
-
-                    // Content row or column
-                    if (isMobile) {
-                        Column(
-                            modifier = Modifier.fillMaxWidth().padding(16.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Controls(selectedFunction, { selectedFunction = it }, scale, { scale = it })
-                            Spacer(Modifier.height(16.dp))
-                            FunctionGraph(selectedFunction, scale, Modifier.fillMaxWidth().height(300.dp))
-                        }
-                    } else {
-                        Row(
-                            modifier = Modifier.fillMaxWidth().padding(16.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Controls(
-                                selectedFunction,
-                                { selectedFunction = it },
-                                scale,
-                                { scale = it },
-                                Modifier.weight(0.3f)
-                            )
-                            Spacer(Modifier.width(16.dp))
-                            FunctionGraph(selectedFunction, scale, Modifier.weight(0.7f).height(400.dp))
-                        }
-                    }
-
-                    // Algorithm section
-                    Card(
-                        modifier = Modifier.fillMaxWidth(0.9f).padding(16.dp),
-                        elevation = CardDefaults.cardElevation(4.dp)
-                    ) {
-                        Column(modifier = Modifier.padding(16.dp)) {
-                            Text("Алгоритм построения графика", style = MaterialTheme.typography.headlineMedium)
-                            Text("1. Генерация точек: Создаем массив x-значений от -10 до 10 с шагом 0.1, умноженным на масштаб.")
-                            Text("2. Вычисление значений: Для каждой точки x вычисляем y в зависимости от выбранной функции (sin(x), cos(x) или x²).")
-                            Text("3. Интерполяция: Рисуем линии между последовательными точками для создания гладкой кривой с использованием линейной интерполяции.")
-                            Text("4. Отрисовка осей: Добавляем оси координат для ориентира.")
-                        }
-                    }
-                }
-            },
-            bottomBar = {
-                BottomAppBar {
-                    Text(
-                        "© 2025 Визуализатор функций. Сделано с использованием Kotlin и Compose Multiplatform.",
-                        modifier = Modifier.fillMaxWidth(),
-                        textAlign = TextAlign.Center,
-                        fontSize = 12.sp
-                    )
-                }
+    AdaptiveScreen(
+        title = "Визуализатор математических функций",
+        onBack = onBack,
+        footerText = "© 2025 Визуализатор функций. Сделано с использованием Kotlin и Compose Multiplatform.",
+        modifier = modifier
+    ) { isVerticalLayout, screenWidth ->
+        // Main content area with controls and graph
+        if (isVerticalLayout) {
+            // Vertical layout (mobile/tablet)
+            Column(
+                modifier = Modifier.fillMaxWidth().padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Controls(selectedFunction, { selectedFunction = it }, scale, { scale = it })
+                Spacer(Modifier.height(16.dp))
+                FunctionGraph(selectedFunction, scale, Modifier.fillMaxWidth().height(300.dp))
             }
-        )
+        } else {
+            // Horizontal layout (desktop/larger screens)
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Controls(
+                    selectedFunction,
+                    { selectedFunction = it },
+                    scale,
+                    { scale = it },
+                    Modifier.weight(0.3f)
+                )
+                Spacer(Modifier.width(16.dp))
+                FunctionGraph(selectedFunction, scale, Modifier.weight(0.7f).height(400.dp))
+            }
+        }
+
+        // Algorithm section
+        Card(
+            modifier = Modifier.fillMaxWidth(0.9f).padding(16.dp),
+            elevation = CardDefaults.cardElevation(4.dp)
+        ) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text("Алгоритм построения графика", style = MaterialTheme.typography.headlineMedium)
+                Text("1. Генерация точек: Создаем массив x-значений от -10 до 10 с шагом 0.1, умноженным на масштаб.")
+                Text("2. Вычисление значений: Для каждой точки x вычисляем y в зависимости от выбранной функции (sin(x), cos(x) или x²).")
+                Text("3. Интерполяция: Рисуем линии между последовательными точками для создания гладкой кривой с использованием линейной интерполяции.")
+                Text("4. Отрисовка осей: Добавляем оси координат для ориентира.")
+            }
+        }
     }
 }
 

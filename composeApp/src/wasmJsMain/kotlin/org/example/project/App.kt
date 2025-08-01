@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import org.example.project.screens.FunctionDrawer
+import org.example.project.screens.calculator.CalculatorScreen
 import org.example.project.screens.details.DetailsScreen
 import org.example.project.screens.examples.ExamplesPage
 import org.example.project.screens.home.HomeScreen
@@ -27,7 +28,8 @@ fun App() {
                     HomeScreen(
                         onNavigateToDetails = { navController.navigate("details") },
                         onNavigateToFunction = { navController.navigate("function") },
-                        onNavigateToExamples = { navController.navigate("examples") }
+                        onNavigateToExamples = { navController.navigate("examples") },
+                        navController = navController
                     )
                 }
                 composable("details") {
@@ -38,6 +40,9 @@ fun App() {
                 }
                 composable("examples") {
                     ExamplesPage(onBack = { navController.popBackStack() })
+                }
+                composable("calculator") {
+                    CalculatorScreen(onBack = { navController.popBackStack() })
                 }
             }
     }

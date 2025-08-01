@@ -2,16 +2,15 @@ package org.example.project.screens.home
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
@@ -20,14 +19,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import org.example.project.components.NavCategory
 import org.example.project.components.NavItem
-import org.example.project.components.NavigationTemplate
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     onNavigateToDetails: () -> Unit,
     onNavigateToFunction: () -> Unit,
-    onNavigateToExamples: () -> Unit
+    onNavigateToExamples: () -> Unit,
+    navController: androidx.navigation.NavController? = null
 ) {
     val density = LocalDensity.current
     var screenWidth by remember { mutableStateOf(0.dp) }
@@ -62,42 +61,42 @@ fun HomeScreen(
     val navCards = listOf(
         NavItem(
             id = "details",
-            title = "Details Page", 
+            title = "Details Page",
             description = "View a simple details page example",
             categoryId = "demos",
             onClick = onNavigateToDetails
         ),
         NavItem(
             id = "functions",
-            title = "Function Visualizer", 
+            title = "Function Visualizer",
             description = "Interactive tool to visualize mathematical functions",
             categoryId = "tools",
             onClick = onNavigateToFunction
         ),
         NavItem(
             id = "calculator",
-            title = "Calculator", 
+            title = "Calculator",
             description = "Basic arithmetic calculator",
             categoryId = "tools",
-            onClick = { /* TODO */ }
+            onClick = { navController?.navigate("calculator") }
         ),
         NavItem(
             id = "settings",
-            title = "Settings", 
+            title = "Settings",
             description = "Application configuration",
             categoryId = "demos",
             onClick = { /* TODO */ }
         ),
         NavItem(
             id = "examples",
-            title = "Examples Gallery", 
+            title = "Examples Gallery",
             description = "Browse various code examples",
             categoryId = "examples",
             onClick = onNavigateToExamples
         ),
         NavItem(
             id = "about",
-            title = "About", 
+            title = "About",
             description = "Information about this application",
             categoryId = "examples",
             onClick = { /* TODO */ }
@@ -109,8 +108,8 @@ fun HomeScreen(
 
     // Initialize with all categories selected
     LaunchedEffect(Unit) {
-        categories.forEach { category -> 
-            selectedCategories[category.id] = true 
+        categories.forEach { category ->
+            selectedCategories[category.id] = true
         }
     }
 
@@ -169,8 +168,8 @@ fun HomeScreen(
                         val isSelected = selectedCategories[category.id] == true
                         FilterChip(
                             selected = isSelected,
-                            onClick = { 
-                                selectedCategories[category.id] = !isSelected 
+                            onClick = {
+                                selectedCategories[category.id] = !isSelected
                             },
                             label = { Text(category.name) },
                             colors = FilterChipDefaults.filterChipColors(
