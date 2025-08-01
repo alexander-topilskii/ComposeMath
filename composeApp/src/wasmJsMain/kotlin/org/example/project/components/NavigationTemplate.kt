@@ -1,4 +1,4 @@
-package org.example.project.screens.home
+package org.example.project.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -18,91 +18,49 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import org.example.project.components.NavCategory
-import org.example.project.components.NavItem
-import org.example.project.components.NavigationTemplate
+import androidx.compose.ui.unit.sp
 
+/**
+ * Data class representing a navigation card
+ */
+data class NavItem(
+    val id: String,
+    val title: String,
+    val description: String,
+    val categoryId: String,
+    val onClick: () -> Unit
+)
+
+/**
+ * Data class representing a category for navigation items
+ */
+data class NavCategory(
+    val id: String,
+    val name: String,
+    val color: Color
+)
+
+/**
+ * A reusable navigation template that can be used for creating navigation pages
+ * with categorized items displayed as cards.
+ *
+ * @param title The title of the navigation page
+ * @param categories List of categories to organize navigation items
+ * @param items List of navigation items to display
+ * @param onBack Callback for handling back navigation, null if it's a root page
+ * @param modifier Modifier for the component
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(
-    onNavigateToDetails: () -> Unit,
-    onNavigateToFunction: () -> Unit,
-    onNavigateToExamples: () -> Unit
+fun NavigationTemplate(
+    title: String,
+    categories: List<NavCategory>,
+    items: List<NavItem>,
+    onBack: (() -> Unit)? = null,
+    modifier: Modifier = Modifier
 ) {
     val density = LocalDensity.current
     var screenWidth by remember { mutableStateOf(0.dp) }
-
-    // Define categories with distinct colors
-    val categories = listOf(
-        NavCategory("demos", "Demo Pages", Color(0xFF5B8EDB)),
-        NavCategory("tools", "Interactive Tools", Color(0xFF26A69A)),
-        NavCategory("examples", "Examples", Color(0xFFEF6C00))
-    )
-
-    // Function to derive a shade from category color
-    @Composable
-    fun deriveCardColor(categoryId: String, cardId: String): Color {
-        val baseColor = categories.find { it.id == categoryId }?.color ?: MaterialTheme.colorScheme.primary
-
-        // Use the hash of the card ID to generate a consistent lighter/darker shade
-        val hashValue = cardId.hashCode()
-        val lightnessAdjust = (hashValue % 30) / 100f  // -0.3 to 0.3 adjustment
-
-        // Simple way to lighten/darken - in a real app you might use HSL conversion
-        val factor = 1f + lightnessAdjust
-        return Color(
-            red = (baseColor.red * factor).coerceIn(0f, 1f),
-            green = (baseColor.green * factor).coerceIn(0f, 1f),
-            blue = (baseColor.blue * factor).coerceIn(0f, 1f),
-            alpha = baseColor.alpha
-        )
-    }
-
-    // Define navigation cards with their categories and derived colors
-    val navCards = listOf(
-        NavItem(
-            id = "details",
-            title = "Details Page", 
-            description = "View a simple details page example",
-            categoryId = "demos",
-            onClick = onNavigateToDetails
-        ),
-        NavItem(
-            id = "functions",
-            title = "Function Visualizer", 
-            description = "Interactive tool to visualize mathematical functions",
-            categoryId = "tools",
-            onClick = onNavigateToFunction
-        ),
-        NavItem(
-            id = "calculator",
-            title = "Calculator", 
-            description = "Basic arithmetic calculator",
-            categoryId = "tools",
-            onClick = { /* TODO */ }
-        ),
-        NavItem(
-            id = "settings",
-            title = "Settings", 
-            description = "Application configuration",
-            categoryId = "demos",
-            onClick = { /* TODO */ }
-        ),
-        NavItem(
-            id = "examples",
-            title = "Examples Gallery", 
-            description = "Browse various code examples",
-            categoryId = "examples",
-            onClick = onNavigateToExamples
-        ),
-        NavItem(
-            id = "about",
-            title = "About", 
-            description = "Information about this application",
-            categoryId = "examples",
-            onClick = { /* TODO */ }
-        )
-    )
 
     // State for selected categories (multi-select)
     val selectedCategories = remember { mutableStateMapOf<String, Boolean>() }
@@ -114,27 +72,32 @@ fun HomeScreen(
         }
     }
 
-    // Filter cards based on selected categories
-    val filteredCards = if (selectedCategories.isEmpty() || selectedCategories.none { it.value }) {
-        // If no categories selected, show all
-        navCards
+    // Filter items based on selected categories
+    val filteredItems = if (selectedCategories.isEmpty() || selectedCategories.none { it.value }) {
+        items
     } else {
-        // Show only cards from selected categories
-        navCards.filter { card -> selectedCategories[card.categoryId] == true }
+        items.filter { item -> selectedCategories[item.categoryId] == true }
     }
 
-    // Group cards by category
-    val groupedCards = filteredCards.groupBy { it.categoryId }
+    // Group items by category
+    val groupedItems = filteredItems.groupBy { it.categoryId }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Compose Web App") },
+                title = { Text(title) },
+                navigationIcon = {
+                    onBack?.let {
+                        IconButton(onClick = onBack) {
+                            Text("←")
+                        }
+                    }
+                }
             )
         }
     ) { padding ->
         Column(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxSize()
                 .padding(padding)
                 .onSizeChanged { size ->
@@ -147,19 +110,11 @@ fun HomeScreen(
             // Determine if mobile-like layout (< 768dp ~ tablets/phones)
             val isMobile = screenWidth < 768.dp
 
-            // App title and description
+            // Category filter chips
             Column(
                 modifier = Modifier.fillMaxWidth().padding(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(
-                    "Welcome to Compose Web App",
-                    style = MaterialTheme.typography.headlineMedium,
-                    textAlign = TextAlign.Center
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
                 // Category filter row with colored chips
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -190,9 +145,9 @@ fun HomeScreen(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 categories.forEach { category ->
-                    val categoryCards = groupedCards[category.id] ?: emptyList()
+                    val categoryItems = groupedItems[category.id] ?: emptyList()
 
-                    if (categoryCards.isNotEmpty()) {
+                    if (categoryItems.isNotEmpty()) {
                         item {
                             Column {
                                 // Category header
@@ -223,15 +178,15 @@ fun HomeScreen(
                                     userScrollEnabled = false,  // Prevent nested scrolling
                                     modifier = Modifier.height(
                                         if (isMobile) {
-                                            (categoryCards.size * 150).dp
+                                            (categoryItems.size * 150).dp
                                         } else {
-                                            ((categoryCards.size + 2) / 3 * 150).dp
+                                            ((categoryItems.size + 2) / 3 * 150).dp
                                         }
                                     )
                                 ) {
-                                    items(categoryCards) { card ->
+                                    items(categoryItems) { item ->
                                         NavigationCard(
-                                            card = card,
+                                            item = item,
                                             categoryColor = category.color
                                         )
                                     }
@@ -245,16 +200,19 @@ fun HomeScreen(
     }
 }
 
+/**
+ * A card component for displaying a navigation item with styling based on its category color
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun NavigationCard(
-    card: NavItem,
+    item: NavItem,
     categoryColor: Color
 ) {
-    // Generate a unique shade based on the card ID
-    val cardColor = remember(card.id) {
+    // Generate a unique shade based on the item ID
+    val cardColor = remember(item.id) {
         // Create a variation of the category color
-        val hashValue = card.id.hashCode()
+        val hashValue = item.id.hashCode()
         val lightnessAdjust = (hashValue % 30) / 100f  // -0.3 to 0.3 adjustment
 
         // Simple way to lighten/darken
@@ -275,7 +233,7 @@ private fun NavigationCard(
     }
 
     Card(
-        onClick = card.onClick,
+        onClick = item.onClick,
         modifier = Modifier
             .fillMaxWidth()
             .height(150.dp),
@@ -290,7 +248,7 @@ private fun NavigationCard(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = card.title,
+                text = item.title,
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
@@ -300,7 +258,7 @@ private fun NavigationCard(
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = card.description,
+                text = item.description,
                 style = MaterialTheme.typography.bodyMedium,
                 textAlign = TextAlign.Center,
                 color = textColor.copy(alpha = 0.8f),
