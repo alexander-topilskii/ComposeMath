@@ -1,27 +1,19 @@
 package org.example.project
 
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.safeContentPadding
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import org.example.project.screens.FunctionDrawer
+import org.example.project.screens.details.DetailsScreen
+import org.example.project.screens.home.HomeScreen
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import kotlin.math.cos
-import kotlin.math.sin
 
 @Composable
 fun App() {
@@ -36,26 +28,16 @@ fun App() {
             val navController = rememberNavController()
             NavHost(navController = navController, startDestination = "home") {
                 composable("home") {
-                    Column(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                    ) {
-                        Text("Home Screen")
-                        Button(onClick = { navController.navigate("details") }) {
-                            Text("Go to Details")
-                        }
-                    }
+                    HomeScreen(
+                        onNavigateToDetails = { navController.navigate("details") },
+                        onNavigateToFunction = { navController.navigate("function") }
+                    )
+                }
+                composable("details") {
+                    DetailsScreen(onNavigateBack = { navController.popBackStack() })
                 }
                 composable("function") {
-                    Column(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                    ) {
-                        Text("Details Screen")
-                        Button(onClick = { navController.popBackStack() }) {
-                            Text("Back")
-                        }
-                    }
+                    FunctionDrawer(modifier = Modifier.fillMaxSize(), onBack = { navController.popBackStack() })
                 }
             }
         }

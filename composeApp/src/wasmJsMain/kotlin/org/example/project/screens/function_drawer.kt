@@ -1,4 +1,4 @@
-package org.example.project
+package org.example.project.screens
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Column
@@ -58,7 +58,7 @@ fun FunctionDrawer(modifier: Modifier, onBack: () -> Unit) {
                 TopAppBar(
                     navigationIcon = {
                         IconButton(onClick = onBack) {
-
+                            Text("←")
                         }
                     },
                     title = { Text("Визуализатор математических функций") },
