@@ -6,44 +6,58 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import kotlinx.browser.window
+import org.example.project.navigation.navigateBack
+import org.example.project.navigation.navigateWithHistory
 import org.example.project.screens.FunctionDrawer
 import org.example.project.screens.calculator.CalculatorScreen
 import org.example.project.screens.details.DetailsScreen
 import org.example.project.screens.examples.ExamplesPage
 import org.example.project.screens.home.HomeScreen
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
+import org.w3c.dom.events.Event
 
 @Composable
 fun App() {
     MaterialTheme {
-        // Remove column wrapper since HomeScreen now uses Scaffold
-        // and has its own layout handling
-            val navController = rememberNavController()
-            NavHost(navController = navController, startDestination = "home") {
-                composable("home") {
-                    HomeScreen(
-                        onNavigateToDetails = { navController.navigate("details") },
-                        onNavigateToFunction = { navController.navigate("function") },
-                        onNavigateToExamples = { navController.navigate("examples") },
-                        navController = navController
-                    )
-                }
-                composable("details") {
-                    DetailsScreen(onNavigateBack = { navController.popBackStack() })
-                }
-                composable("function") {
-                    FunctionDrawer(modifier = Modifier.fillMaxSize(), onBack = { navController.popBackStack() })
-                }
-                composable("examples") {
-                    ExamplesPage(onBack = { navController.popBackStack() })
-                }
-                composable("calculator") {
-                    CalculatorScreen(onBack = { navController.popBackStack() })
-                }
+        val navController = rememberNavController()
+
+        DisposableEffect(navController) {
+            val handler: (Event) -> Unit = {
+                navController.popBackStack()
             }
+            window.addEventListener("popstate", handler)
+            onDispose {
+                window.removeEventListener("popstate", handler)
+            }
+        }
+
+        NavHost(navController = navController, startDestination = "home") {
+            composable("home") {
+                HomeScreen(
+                    onNavigateToDetails = { navController.navigateWithHistory("details") },
+                    onNavigateToFunction = { navController.navigateWithHistory("function") },
+                    onNavigateToExamples = { navController.navigateWithHistory("examples") },
+                    navController = navController
+                )
+            }
+            composable("details") {
+                DetailsScreen(onNavigateBack = { navigateBack() })
+            }
+            composable("function") {
+                FunctionDrawer(modifier = Modifier.fillMaxSize(), onBack = { navigateBack() })
+            }
+            composable("examples") {
+                ExamplesPage(onBack = { navigateBack() })
+            }
+            composable("calculator") {
+                CalculatorScreen(onBack = { navigateBack() })
+            }
+        }
     }
 }
