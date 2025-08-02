@@ -16,6 +16,7 @@ import kotlinx.browser.window
 import org.example.project.navigation.navigateBack
 import org.example.project.navigation.navigateWithHistory
 import org.example.project.screens.FunctionDrawer
+import org.example.project.screens.algorithms.*
 import org.example.project.screens.calculator.CalculatorScreen
 import org.example.project.screens.details.DetailsScreen
 import org.example.project.screens.examples.ExamplesPage
@@ -54,6 +55,30 @@ fun App() {
             }
             composable("examples") {
                 ExamplesPage(onBack = { navigateBack() })
+            }
+            composable("algorithms") {
+                AlgorithmsPage(onBack = { navigateBack() }, navController = navController)
+            }
+            composable("quick_merge") {
+                QuickMergeSortScreen(onBack = { navigateBack() })
+            }
+            composable("insert_bubble") {
+                InsertBubbleSortScreen(onBack = { navigateBack() })
+            }
+            composable("binary_linear") {
+                BinaryLinearSearchScreen(onBack = { navigateBack() })
+            }
+            composable("bfs_dfs") {
+                BfsDfsScreen(onBack = { navigateBack() })
+            }
+            composable("dijkstra_bellman_ford") {
+                DijkstraBellmanFordScreen(onBack = { navigateBack() })
+            }
+            composable("bridges_components") {
+                BridgesComponentsScreen(onBack = { navigateBack() })
+            }
+            composable("floyd_warshall_prim") {
+                FloydWarshallPrimScreen(onBack = { navigateBack() })
             }
             composable("calculator") {
                 CalculatorScreen(onBack = { navigateBack() })
