@@ -36,7 +36,8 @@ fun HomeScreen(
     val categories = listOf(
         NavCategory("demos", "Demo Pages", Color(0xFF5B8EDB)),
         NavCategory("tools", "Interactive Tools", Color(0xFF26A69A)),
-        NavCategory("examples", "Examples", Color(0xFFEF6C00))
+        NavCategory("examples", "Examples", Color(0xFFEF6C00)),
+        NavCategory("algorithms", "Алгоритмы", Color(0xFF42A5F5))
     )
 
     // Function to derive a shade from category color
@@ -101,6 +102,13 @@ fun HomeScreen(
             description = "Information about this application",
             categoryId = "examples",
             onClick = { /* TODO */ }
+        ),
+        NavItem(
+            id = "algorithms",
+            title = "Алгоритмы",
+            description = "Навигация по алгоритмам",
+            categoryId = "algorithms",
+            onClick = { navController?.navigateWithHistory("algorithms") }
         )
     )
 
