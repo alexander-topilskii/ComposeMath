@@ -1,13 +1,10 @@
 package org.example.project
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.safeContentPadding
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -26,19 +23,20 @@ import org.w3c.dom.events.Event
 @Composable
 fun App() {
     MaterialTheme {
-        val navController = rememberNavController()
+        SelectionContainer {
+            val navController = rememberNavController()
 
-        DisposableEffect(navController) {
-            val handler: (Event) -> Unit = {
-                navController.popBackStack()
+            DisposableEffect(navController) {
+                val handler: (Event) -> Unit = {
+                    navController.popBackStack()
+                }
+                window.addEventListener("popstate", handler)
+                onDispose {
+                    window.removeEventListener("popstate", handler)
+                }
             }
-            window.addEventListener("popstate", handler)
-            onDispose {
-                window.removeEventListener("popstate", handler)
-            }
-        }
 
-        NavHost(navController = navController, startDestination = "home") {
+            NavHost(navController = navController, startDestination = "home") {
             composable("home") {
                 HomeScreen(
                     onNavigateToDetails = { navController.navigateWithHistory("details") },
@@ -82,6 +80,7 @@ fun App() {
             }
             composable("calculator") {
                 CalculatorScreen(onBack = { navigateBack() })
+            }
             }
         }
     }
