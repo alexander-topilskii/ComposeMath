@@ -19,6 +19,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import org.example.project.components.NavCategory
 import org.example.project.components.NavItem
+import org.example.project.navigation.navigateWithHistory
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -79,7 +80,7 @@ fun HomeScreen(
             title = "Calculator",
             description = "Basic arithmetic calculator",
             categoryId = "tools",
-            onClick = { navController?.navigate("calculator") }
+            onClick = { navController?.navigateWithHistory("calculator") }
         ),
         NavItem(
             id = "settings",
@@ -100,7 +101,7 @@ fun HomeScreen(
             title = "Алгоритмы",
             description = "Навигация по алгоритмам",
             categoryId = "algorithms",
-            onClick = { navController?.navigate("algorithms") }
+            onClick = { navController?.navigateWithHistory("algorithms") }
         ),
         NavItem(
             id = "about",
