@@ -50,7 +50,7 @@ data class NavCategory(
  * @param onBack Callback for handling back navigation, null if it's a root page
  * @param modifier Modifier for the component
  */
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun NavigationTemplate(
     title: String,
@@ -116,16 +116,17 @@ fun NavigationTemplate(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 // Category filter row with colored chips
-                Row(
+                FlowRow(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
+                    horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     categories.forEach { category ->
                         val isSelected = selectedCategories[category.id] == true
                         FilterChip(
                             selected = isSelected,
-                            onClick = { 
-                                selectedCategories[category.id] = !isSelected 
+                            onClick = {
+                                selectedCategories[category.id] = !isSelected
                             },
                             label = { Text(category.name) },
                             colors = FilterChipDefaults.filterChipColors(
@@ -133,7 +134,6 @@ fun NavigationTemplate(
                                 selectedLabelColor = Color.White
                             )
                         )
-                        Spacer(modifier = Modifier.width(8.dp))
                     }
                 }
             }
