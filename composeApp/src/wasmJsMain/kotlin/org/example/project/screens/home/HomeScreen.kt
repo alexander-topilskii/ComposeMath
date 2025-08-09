@@ -13,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -134,10 +135,14 @@ fun HomeScreen(
     // Group cards by category
     val groupedCards = filteredCards.groupBy { it.categoryId }
 
+    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+
     Scaffold(
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            TopAppBar(
-                title = { Text("Compose Web App") },
+            LargeTopAppBar(
+                title = { Text("Welcome to Compose Web App") },
+                scrollBehavior = scrollBehavior
             )
         }
     ) { padding ->
@@ -152,51 +157,38 @@ fun HomeScreen(
                 },
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Determine if mobile-like layout (< 768dp ~ tablets/phones)
             val isMobile = screenWidth < 768.dp
 
-            // App title and description
-            Column(
-                modifier = Modifier.fillMaxWidth().padding(16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    "Welcome to Compose Web App",
-                    style = MaterialTheme.typography.headlineMedium,
-                    textAlign = TextAlign.Center
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                // Category filter row with colored chips
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    categories.forEach { category ->
-                        val isSelected = selectedCategories[category.id] == true
-                        FilterChip(
-                            selected = isSelected,
-                            onClick = {
-                                selectedCategories[category.id] = !isSelected
-                            },
-                            label = { Text(category.name) },
-                            colors = FilterChipDefaults.filterChipColors(
-                                selectedContainerColor = category.color.copy(alpha = 0.7f),
-                                selectedLabelColor = Color.White
-                            )
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                    }
-                }
-            }
-
-            // Cards grouped by category
             LazyColumn(
                 contentPadding = PaddingValues(16.dp),
                 verticalArrangement = Arrangement.spacedBy(24.dp),
                 modifier = Modifier.fillMaxWidth()
             ) {
+                item {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        categories.forEach { category ->
+                            val isSelected = selectedCategories[category.id] == true
+                            FilterChip(
+                                selected = isSelected,
+                                onClick = {
+                                    selectedCategories[category.id] = !isSelected
+                                },
+                                label = { Text(category.name) },
+                                colors = FilterChipDefaults.filterChipColors(
+                                    selectedContainerColor = category.color.copy(alpha = 0.7f),
+                                    selectedLabelColor = Color.White
+                                )
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
+
+                // Cards grouped by category
                 categories.forEach { category ->
                     val categoryCards = groupedCards[category.id] ?: emptyList()
 
