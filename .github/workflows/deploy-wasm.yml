@@ -35,9 +35,7 @@ jobs:
       - name: "♻️ Optimize Wasm"
         run: |
           OUT_DIR=composeApp/build/dist/wasmJs/productionExecutable
-          for wasm in "$OUT_DIR"/*.wasm; do
-            wasm-opt -O3 -o "$wasm" "$wasm"
-          done
+          wasm-opt -O3 -o $OUT_DIR/composeApp.wasm $OUT_DIR/composeApp.wasm
       - name: "📄 Configure GitHub Pages"
         uses: actions/configure-pages@v5
       - name: "📤 Upload GitHub Pages artifact"
