@@ -1,6 +1,5 @@
----
 name: Deploy WasmJS App to GitHub Pages
-'on':
+on:
   push:
     branches:
       - main
@@ -14,8 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: github-pages
-      # Это добавит ссылку на деплой в UI Actions
-      url: ${{ steps.deployment.outputs.page_url }}
+      url: ${{ steps.deployment.outputs.page_url }}  # Это добавит ссылку на деплой в UI Actions
     steps:
       - name: "✅ Checkout code"
         uses: actions/checkout@v4
@@ -30,12 +28,6 @@ jobs:
           gradle-version: 8.9
       - name: "🛠️ Build WasmJS App"
         run: ./gradlew :composeApp:wasmJsBrowserDistribution
-      - name: "⬇️ Install binaryen"
-        run: sudo apt-get update && sudo apt-get install -y binaryen
-      - name: "♻️ Optimize Wasm"
-        run: |
-          OUT_DIR=composeApp/build/dist/wasmJs/productionExecutable
-          wasm-opt -O3 -o $OUT_DIR/composeApp.wasm $OUT_DIR/composeApp.wasm
       - name: "📄 Configure GitHub Pages"
         uses: actions/configure-pages@v5
       - name: "📤 Upload GitHub Pages artifact"
