@@ -17,12 +17,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
 
-const val TWO_POINTERS_SCREEN = "two_pointers"
+const val TWO_POINTERS_SCREEN_GEM = "two_pointers_gem"
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TwoPointersScreen(onBack: () -> Unit) {
+fun TwoPointersScreenGem(onBack: () -> Unit) {
     Scaffold(
         topBar = {
             TopAppBar(

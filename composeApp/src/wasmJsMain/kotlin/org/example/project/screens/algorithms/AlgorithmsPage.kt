@@ -15,7 +15,8 @@ import org.example.project.components.NavCategory
 import org.example.project.components.NavItem
 import org.example.project.components.NavigationTemplate
 import org.example.project.navigation.navigateWithHistory
-import org.example.project.screens.algorithms.linear_algorithms.TWO_POINTERS_SCREEN
+import org.example.project.screens.algorithms.linear_algorithms.TWO_POINTERS_SCREEN_GEM
+import org.example.project.screens.algorithms.linear_algorithms.TWO_POINTERS_SCREEN_GROK
 
 object AlgorithmConstants {
     const val LINEAR_ALGORITHMS_CATEGORY = "linear algorithms"
@@ -46,11 +47,17 @@ fun AlgorithmsPage(onBack: () -> Unit, pages: List<Pair<String, @Composable () -
             categoryId = AlgorithmConstants.LINEAR_ALGORITHMS_CATEGORY,
             onClick = { navController.navigateWithHistory(startDestination) }
         ), NavItem(
-            id = TWO_POINTERS_SCREEN,
-            title = "TwoPointersScreen",
+            id = TWO_POINTERS_SCREEN_GEM,
+            title = "TwoPointersScreen gem",
             description = "",
             categoryId = AlgorithmConstants.LINEAR_ALGORITHMS_CATEGORY,
-            onClick = { navController.navigateWithHistory(TWO_POINTERS_SCREEN) }
+            onClick = { navController.navigateWithHistory(TWO_POINTERS_SCREEN_GEM) }
+        ),NavItem(
+            id = TWO_POINTERS_SCREEN_GROK,
+            title = "TwoPointersScreen grok",
+            description = "",
+            categoryId = AlgorithmConstants.LINEAR_ALGORITHMS_CATEGORY,
+            onClick = { navController.navigateWithHistory(TWO_POINTERS_SCREEN_GROK) }
         ),
         NavItem(
             id = AlgorithmConstants.INSERT_BUBBLE_SORT,
