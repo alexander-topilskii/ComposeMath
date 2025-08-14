@@ -8,12 +8,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.navigation.NavController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import org.example.project.components.NavCategory
 import org.example.project.components.NavItem
 import org.example.project.components.NavigationTemplate
 import org.example.project.navigation.navigateWithHistory
-import org.example.project.screens.algorithms.linear_algorithms.QUICK_MERGE_SORT_SCREEN
 
 object AlgorithmConstants {
     const val SEARCH_SORT = "search_sort"
@@ -28,7 +29,9 @@ object AlgorithmConstants {
 }
 
 @Composable
-fun AlgorithmsPage(onBack: () -> Unit, navController: NavController) {
+fun AlgorithmsPage(onBack: () -> Unit, pages: List<Pair<String, @Composable () -> Unit>>, startDestination: String) {
+    val navController = rememberNavController()
+
     val categories = listOf(
         NavCategory(AlgorithmConstants.SEARCH_SORT, "Линейные алгоритмы", Color(0xFFEC407A)),
         NavCategory(AlgorithmConstants.GRAPH, "Графовые алгоритмы", Color(0xFF7E57C2))
@@ -36,11 +39,11 @@ fun AlgorithmsPage(onBack: () -> Unit, navController: NavController) {
 
     val navItems = listOf(
         NavItem(
-            id = QUICK_MERGE_SORT_SCREEN,
+            id = startDestination,
             title = "Быстрая сортировка, слиянием",
             description = "",
             categoryId = AlgorithmConstants.SEARCH_SORT,
-            onClick = { navController.navigateWithHistory(QUICK_MERGE_SORT_SCREEN) }
+            onClick = { navController.navigateWithHistory(startDestination) }
         ),
         NavItem(
             id = AlgorithmConstants.INSERT_BUBBLE_SORT,
@@ -91,7 +94,15 @@ fun AlgorithmsPage(onBack: () -> Unit, navController: NavController) {
         categories = categories,
         items = navItems,
         onBack = onBack
-    )
+    ) {
+        NavHost(navController = navController, startDestination = startDestination) {
+            pages.forEach { (route, page) ->
+                composable(route) {
+                    page()
+                }
+            }
+        }
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -119,20 +130,25 @@ fun AlgorithmPlaceholderScreen(title: String, onBack: () -> Unit) {
 }
 
 @Composable
-fun InsertBubbleSortScreen(onBack: () -> Unit) = AlgorithmPlaceholderScreen("Сортировка вставками, пузырьком", onBack)
+fun InsertBubbleSortScreen(onBack: () -> Unit) =
+    AlgorithmPlaceholderScreen("Сортировка вставками, пузырьком", onBack)
 
 @Composable
-fun BinaryLinearSearchScreen(onBack: () -> Unit) = AlgorithmPlaceholderScreen("Бинарный поиск, линейный поиск", onBack)
+fun BinaryLinearSearchScreen(onBack: () -> Unit) =
+    AlgorithmPlaceholderScreen("Бинарный поиск, линейный поиск", onBack)
 
 @Composable
 fun BfsDfsScreen(onBack: () -> Unit) = AlgorithmPlaceholderScreen("Поиск в ширину (BFS), в глубину (DFS)", onBack)
 
 @Composable
-fun DijkstraBellmanFordScreen(onBack: () -> Unit) = AlgorithmPlaceholderScreen("Алгоритм Дейкстры, Беллмана-Форда", onBack)
+fun DijkstraBellmanFordScreen(onBack: () -> Unit) =
+    AlgorithmPlaceholderScreen("Алгоритм Дейкстры, Беллмана-Форда", onBack)
 
 @Composable
-fun BridgesComponentsScreen(onBack: () -> Unit) = AlgorithmPlaceholderScreen("Поиск мостов, компонент связности", onBack)
+fun BridgesComponentsScreen(onBack: () -> Unit) =
+    AlgorithmPlaceholderScreen("Поиск мостов, компонент связности", onBack)
 
 @Composable
-fun FloydWarshallPrimScreen(onBack: () -> Unit) = AlgorithmPlaceholderScreen("Алгоритм Флойда-Уоршелла, Прима", onBack)
+fun FloydWarshallPrimScreen(onBack: () -> Unit) =
+    AlgorithmPlaceholderScreen("Алгоритм Флойда-Уоршелла, Прима", onBack)
 

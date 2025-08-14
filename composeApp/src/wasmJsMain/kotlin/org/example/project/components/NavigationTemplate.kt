@@ -57,13 +57,17 @@ fun NavigationTemplate(
     categories: List<NavCategory>,
     items: List<NavItem>,
     onBack: (() -> Unit)? = null,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    selectedContent: (@Composable (NavItem) -> Unit)? = null
 ) {
     val density = LocalDensity.current
     var screenWidth by remember { mutableStateOf(0.dp) }
 
     // State for selected categories (multi-select)
     val selectedCategories = remember { mutableStateMapOf<String, Boolean>() }
+
+    // State for currently selected navigation item
+    var selectedItem by remember { mutableStateOf<NavItem?>(null) }
 
     // Initialize with all categories selected
     LaunchedEffect(Unit) {
@@ -88,7 +92,13 @@ fun NavigationTemplate(
                 title = { Text(title) },
                 navigationIcon = {
                     onBack?.let {
-                        IconButton(onClick = onBack) {
+                        IconButton(onClick = {
+                            if (selectedItem != null) {
+                                selectedItem = null
+                            } else {
+                                onBack()
+                            }
+                        }) {
                             Text("←")
                         }
                     }
@@ -96,99 +106,107 @@ fun NavigationTemplate(
             )
         }
     ) { padding ->
-        Column(
-            modifier = modifier
-                .fillMaxSize()
-                .padding(padding)
-                .onSizeChanged { size ->
-                    with(density) {
-                        screenWidth = size.width.toDp()
-                    }
-                },
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            // Determine if mobile-like layout (< 768dp ~ tablets/phones)
-            val isMobile = screenWidth < 768.dp
-
-            // Category filter chips
+        if (selectedItem != null && selectedContent != null) {
+            // Display selected content if an item is selected
+            selectedContent(selectedItem!!)
+        } else {
+            // Default navigation layout
             Column(
-                modifier = Modifier.fillMaxWidth().padding(16.dp),
+                modifier = modifier
+                    .fillMaxSize()
+                    .padding(padding)
+                    .onSizeChanged { size ->
+                        with(density) {
+                            screenWidth = size.width.toDp()
+                        }
+                    },
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // Category filter row with colored chips
-                FlowRow(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                // Determine if mobile-like layout (< 768dp ~ tablets/phones)
+                val isMobile = screenWidth < 768.dp
+
+                // Category filter chips
+                Column(
+                    modifier = Modifier.fillMaxWidth().padding(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    categories.forEach { category ->
-                        val isSelected = selectedCategories[category.id] == true
-                        FilterChip(
-                            selected = isSelected,
-                            onClick = {
-                                selectedCategories[category.id] = !isSelected
-                            },
-                            label = { Text(category.name) },
-                            colors = FilterChipDefaults.filterChipColors(
-                                selectedContainerColor = category.color.copy(alpha = 0.7f),
-                                selectedLabelColor = Color.White
+                    // Category filter row with colored chips
+                    FlowRow(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        categories.forEach { category ->
+                            val isSelected = selectedCategories[category.id] == true
+                            FilterChip(
+                                selected = isSelected,
+                                onClick = {
+                                    selectedCategories[category.id] = !isSelected
+                                },
+                                label = { Text(category.name) },
+                                colors = FilterChipDefaults.filterChipColors(
+                                    selectedContainerColor = category.color.copy(alpha = 0.7f),
+                                    selectedLabelColor = Color.White
+                                )
                             )
-                        )
+                        }
                     }
                 }
-            }
 
-            // Cards grouped by category
-            LazyColumn(
-                contentPadding = PaddingValues(16.dp),
-                verticalArrangement = Arrangement.spacedBy(24.dp),
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                categories.forEach { category ->
-                    val categoryItems = groupedItems[category.id] ?: emptyList()
+                // Cards grouped by category
+                LazyColumn(
+                    contentPadding = PaddingValues(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(24.dp),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    categories.forEach { category ->
+                        val categoryItems = groupedItems[category.id] ?: emptyList()
 
-                    if (categoryItems.isNotEmpty()) {
-                        item {
-                            Column {
-                                // Category header
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(bottom = 8.dp),
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Box(
+                        if (categoryItems.isNotEmpty()) {
+                            item {
+                                Column {
+                                    // Category header
+                                    Row(
                                         modifier = Modifier
-                                            .size(16.dp)
-                                            .background(category.color, RoundedCornerShape(4.dp))
-                                    )
-                                    Spacer(Modifier.width(8.dp))
-                                    Text(
-                                        text = category.name,
-                                        style = MaterialTheme.typography.titleLarge,
-                                        fontWeight = FontWeight.Bold
-                                    )
-                                }
-
-                                // Grid of cards for this category
-                                LazyVerticalGrid(
-                                    columns = GridCells.Fixed(if (isMobile) 1 else 3),
-                                    horizontalArrangement = Arrangement.spacedBy(16.dp),
-                                    verticalArrangement = Arrangement.spacedBy(16.dp),
-                                    userScrollEnabled = false,  // Prevent nested scrolling
-                                    modifier = Modifier.height(
-                                        if (isMobile) {
-                                            (categoryItems.size * 150).dp
-                                        } else {
-                                            ((categoryItems.size + 2) / 3 * 150).dp
-                                        }
-                                    )
-                                ) {
-                                    items(categoryItems) { item ->
-                                        NavigationCard(
-                                            item = item,
-                                            categoryColor = category.color
+                                            .fillMaxWidth()
+                                            .padding(bottom = 8.dp),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Box(
+                                            modifier = Modifier
+                                                .size(16.dp)
+                                                .background(category.color, RoundedCornerShape(4.dp))
                                         )
+                                        Spacer(Modifier.width(8.dp))
+                                        Text(
+                                            text = category.name,
+                                            style = MaterialTheme.typography.titleLarge,
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                    }
+
+                                    // Grid of cards for this category
+                                    LazyVerticalGrid(
+                                        columns = GridCells.Fixed(if (isMobile) 1 else 3),
+                                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                                        verticalArrangement = Arrangement.spacedBy(16.dp),
+                                        userScrollEnabled = false,  // Prevent nested scrolling
+                                        modifier = Modifier.height(
+                                            if (isMobile) {
+                                                (categoryItems.size * 150).dp
+                                            } else {
+                                                ((categoryItems.size + 2) / 3 * 150).dp
+                                            }
+                                        )
+                                    ) {
+                                        items(categoryItems) { item ->
+                                            NavigationCard(
+                                                item = item.copy(onClick = {
+                                                    selectedItem = item
+                                                }),
+                                                categoryColor = category.color
+                                            )
+                                        }
                                     }
                                 }
                             }

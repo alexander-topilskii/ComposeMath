@@ -6,5 +6,5 @@ import org.example.project.screens.algorithms.AlgorithmPlaceholderScreen
 const val QUICK_MERGE_SORT_SCREEN = "quick_merge"
 
 @Composable
-fun QuickMergeSortScreen(onBack: () -> Unit) = AlgorithmPlaceholderScreen("Быстрая сортировка, слиянием", onBack)
+fun QuickMergeSortScreen(onBack: () -> Unit): Unit = AlgorithmPlaceholderScreen("Быстрая сортировка, слиянием", onBack)
 

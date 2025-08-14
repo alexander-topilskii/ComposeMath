@@ -14,6 +14,7 @@ import org.example.project.navigation.navigateBack
 import org.example.project.navigation.navigateWithHistory
 import org.example.project.screens.FunctionDrawer
 import org.example.project.screens.algorithms.*
+import org.example.project.screens.algorithms.AlgorithmConstants.INSERT_BUBBLE_SORT
 import org.example.project.screens.algorithms.linear_algorithms.QUICK_MERGE_SORT_SCREEN
 import org.example.project.screens.algorithms.linear_algorithms.QuickMergeSortScreen
 import org.example.project.screens.calculator.CalculatorScreen
@@ -57,31 +58,34 @@ fun App() {
                     ExamplesPage(onBack = { navigateBack() })
                 }
                 composable("algorithms") {
-                    AlgorithmsPage(onBack = { navigateBack() }, navController = navController)
+                    AlgorithmsPage(
+                        onBack = { navigateBack() },
+                        pages = listOf(
+                            QUICK_MERGE_SORT_SCREEN to { QuickMergeSortScreen(onBack = { navigateBack() }) },
+                            INSERT_BUBBLE_SORT to { InsertBubbleSortScreen(onBack = { navigateBack() }) }
+                        ),
+                        startDestination = QUICK_MERGE_SORT_SCREEN
+                    )
                 }
-                //Region Algorithms
-                composable(QUICK_MERGE_SORT_SCREEN) {
-                    QuickMergeSortScreen(onBack = { navigateBack() })
-                }
-                composable(AlgorithmConstants.INSERT_BUBBLE_SORT) {
-                    InsertBubbleSortScreen(onBack = { navigateBack() })
-                }
-                composable(AlgorithmConstants.BINARY_LINEAR_SEARCH) {
-                    BinaryLinearSearchScreen(onBack = { navigateBack() })
-                }
-                composable(AlgorithmConstants.BFS_DFS) {
-                    BfsDfsScreen(onBack = { navigateBack() })
-                }
-                composable(AlgorithmConstants.DIJKSTRA_BELLMAN_FORD) {
-                    DijkstraBellmanFordScreen(onBack = { navigateBack() })
-                }
-                composable(AlgorithmConstants.BRIDGES_COMPONENTS) {
-                    BridgesComponentsScreen(onBack = { navigateBack() })
-                }
-                composable(AlgorithmConstants.FLOYD_WARSHALL_PRIM) {
-                    FloydWarshallPrimScreen(onBack = { navigateBack() })
-                }
+
+//
+//                composable(AlgorithmConstants.BINARY_LINEAR_SEARCH) {
+//                    BinaryLinearSearchScreen(onBack = { navigateBack() })
+//                }
+//                composable(AlgorithmConstants.BFS_DFS) {
+//                    BfsDfsScreen(onBack = { navigateBack() })
+//                }
+//                composable(AlgorithmConstants.DIJKSTRA_BELLMAN_FORD) {
+//                    DijkstraBellmanFordScreen(onBack = { navigateBack() })
+//                }
+//                composable(AlgorithmConstants.BRIDGES_COMPONENTS) {
+//                    BridgesComponentsScreen(onBack = { navigateBack() })
+//                }
+//                composable(AlgorithmConstants.FLOYD_WARSHALL_PRIM) {
+//                    FloydWarshallPrimScreen(onBack = { navigateBack() })
+//                }
                 // #EndRegion
+
                 composable("calculator") {
                     CalculatorScreen(onBack = { navigateBack() })
                 }
