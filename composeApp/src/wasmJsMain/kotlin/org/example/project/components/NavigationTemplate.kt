@@ -58,7 +58,7 @@ fun NavigationTemplate(
     items: List<NavItem>,
     onBack: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
-    selectedContent: (@Composable (NavItem) -> Unit)? = null
+    selectedContent: @Composable () -> Unit
 ) {
     val density = LocalDensity.current
     var screenWidth by remember { mutableStateOf(0.dp) }
@@ -71,8 +71,8 @@ fun NavigationTemplate(
 
     // Initialize with all categories selected
     LaunchedEffect(Unit) {
-        categories.forEach { category -> 
-            selectedCategories[category.id] = true 
+        categories.forEach { category ->
+            selectedCategories[category.id] = true
         }
     }
 
@@ -106,9 +106,9 @@ fun NavigationTemplate(
             )
         }
     ) { padding ->
+        selectedContent()
         if (selectedItem != null && selectedContent != null) {
-            // Display selected content if an item is selected
-            selectedContent(selectedItem!!)
+
         } else {
             // Default navigation layout
             Column(
@@ -203,6 +203,7 @@ fun NavigationTemplate(
                                             NavigationCard(
                                                 item = item.copy(onClick = {
                                                     selectedItem = item
+                                                    item.onClick()
                                                 }),
                                                 categoryColor = category.color
                                             )
@@ -214,6 +215,7 @@ fun NavigationTemplate(
                     }
                 }
             }
+
         }
     }
 }

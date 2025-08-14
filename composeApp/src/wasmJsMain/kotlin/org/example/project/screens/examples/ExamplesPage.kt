@@ -68,5 +68,5 @@ fun ExamplesPage(onBack: () -> Unit) {
         categories = categories,
         items = navItems,
         onBack = onBack
-    )
+    ) {}
 }

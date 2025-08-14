@@ -15,9 +15,10 @@ import org.example.project.components.NavCategory
 import org.example.project.components.NavItem
 import org.example.project.components.NavigationTemplate
 import org.example.project.navigation.navigateWithHistory
+import org.example.project.screens.algorithms.linear_algorithms.TWO_POINTERS_SCREEN
 
 object AlgorithmConstants {
-    const val SEARCH_SORT = "search_sort"
+    const val LINEAR_ALGORITHMS_CATEGORY = "linear algorithms"
     const val GRAPH = "graph"
 
     const val INSERT_BUBBLE_SORT = "insert_bubble"
@@ -33,7 +34,7 @@ fun AlgorithmsPage(onBack: () -> Unit, pages: List<Pair<String, @Composable () -
     val navController = rememberNavController()
 
     val categories = listOf(
-        NavCategory(AlgorithmConstants.SEARCH_SORT, "Линейные алгоритмы", Color(0xFFEC407A)),
+        NavCategory(AlgorithmConstants.LINEAR_ALGORITHMS_CATEGORY, "Линейные алгоритмы", Color(0xFFEC407A)),
         NavCategory(AlgorithmConstants.GRAPH, "Графовые алгоритмы", Color(0xFF7E57C2))
     )
 
@@ -42,21 +43,27 @@ fun AlgorithmsPage(onBack: () -> Unit, pages: List<Pair<String, @Composable () -
             id = startDestination,
             title = "Быстрая сортировка, слиянием",
             description = "",
-            categoryId = AlgorithmConstants.SEARCH_SORT,
+            categoryId = AlgorithmConstants.LINEAR_ALGORITHMS_CATEGORY,
             onClick = { navController.navigateWithHistory(startDestination) }
+        ), NavItem(
+            id = TWO_POINTERS_SCREEN,
+            title = "TwoPointersScreen",
+            description = "",
+            categoryId = AlgorithmConstants.LINEAR_ALGORITHMS_CATEGORY,
+            onClick = { navController.navigateWithHistory(TWO_POINTERS_SCREEN) }
         ),
         NavItem(
             id = AlgorithmConstants.INSERT_BUBBLE_SORT,
             title = "Сортировка вставками, пузырьком",
             description = "",
-            categoryId = AlgorithmConstants.SEARCH_SORT,
+            categoryId = AlgorithmConstants.LINEAR_ALGORITHMS_CATEGORY,
             onClick = { navController.navigateWithHistory(AlgorithmConstants.INSERT_BUBBLE_SORT) }
         ),
         NavItem(
             id = AlgorithmConstants.BINARY_LINEAR_SEARCH,
             title = "Бинарный поиск, линейный поиск",
             description = "",
-            categoryId = AlgorithmConstants.SEARCH_SORT,
+            categoryId = AlgorithmConstants.LINEAR_ALGORITHMS_CATEGORY,
             onClick = { navController.navigateWithHistory(AlgorithmConstants.BINARY_LINEAR_SEARCH) }
         ),
         NavItem(
@@ -97,6 +104,7 @@ fun AlgorithmsPage(onBack: () -> Unit, pages: List<Pair<String, @Composable () -
     ) {
         NavHost(navController = navController, startDestination = startDestination) {
             pages.forEach { (route, page) ->
+                println("Intag: noclass:AlgorithmsPage: $route $page")
                 composable(route) {
                     page()
                 }
@@ -124,7 +132,7 @@ fun AlgorithmPlaceholderScreen(title: String, onBack: () -> Unit) {
                 .padding(padding),
             contentAlignment = Alignment.Center
         ) {
-            Text("Содержимое появится позже")
+            Text("Содержимое появится позже: $title")
         }
     }
 }

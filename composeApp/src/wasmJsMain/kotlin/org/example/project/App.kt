@@ -17,6 +17,8 @@ import org.example.project.screens.algorithms.*
 import org.example.project.screens.algorithms.AlgorithmConstants.INSERT_BUBBLE_SORT
 import org.example.project.screens.algorithms.linear_algorithms.QUICK_MERGE_SORT_SCREEN
 import org.example.project.screens.algorithms.linear_algorithms.QuickMergeSortScreen
+import org.example.project.screens.algorithms.linear_algorithms.TWO_POINTERS_SCREEN
+import org.example.project.screens.algorithms.linear_algorithms.TwoPointersScreen
 import org.example.project.screens.calculator.CalculatorScreen
 import org.example.project.screens.details.DetailsScreen
 import org.example.project.screens.examples.ExamplesPage
@@ -62,6 +64,7 @@ fun App() {
                         onBack = { navigateBack() },
                         pages = listOf(
                             QUICK_MERGE_SORT_SCREEN to { QuickMergeSortScreen(onBack = { navigateBack() }) },
+                            TWO_POINTERS_SCREEN to { TwoPointersScreen(onBack = { navigateBack() }) },
                             INSERT_BUBBLE_SORT to { InsertBubbleSortScreen(onBack = { navigateBack() }) }
                         ),
                         startDestination = QUICK_MERGE_SORT_SCREEN
