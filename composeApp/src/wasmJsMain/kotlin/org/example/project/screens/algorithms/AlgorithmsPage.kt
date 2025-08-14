@@ -15,11 +15,23 @@ import org.example.project.components.NavigationTemplate
 import org.example.project.navigation.navigateWithHistory
 import org.example.project.screens.algorithms.linear_algorithms.QUICK_MERGE_SORT_SCREEN
 
+object AlgorithmConstants {
+    const val SEARCH_SORT = "search_sort"
+    const val GRAPH = "graph"
+
+    const val INSERT_BUBBLE_SORT = "insert_bubble"
+    const val BINARY_LINEAR_SEARCH = "binary_linear"
+    const val BFS_DFS = "bfs_dfs"
+    const val DIJKSTRA_BELLMAN_FORD = "dijkstra_bellman_ford"
+    const val BRIDGES_COMPONENTS = "bridges_components"
+    const val FLOYD_WARSHALL_PRIM = "floyd_warshall_prim"
+}
+
 @Composable
 fun AlgorithmsPage(onBack: () -> Unit, navController: NavController) {
     val categories = listOf(
-        NavCategory("search_sort", "Линейные алгоритмы", Color(0xFFEC407A)),
-        NavCategory("graph", "Графовые алгоритмы", Color(0xFF7E57C2))
+        NavCategory(AlgorithmConstants.SEARCH_SORT, "Линейные алгоритмы", Color(0xFFEC407A)),
+        NavCategory(AlgorithmConstants.GRAPH, "Графовые алгоритмы", Color(0xFF7E57C2))
     )
 
     val navItems = listOf(
@@ -27,50 +39,50 @@ fun AlgorithmsPage(onBack: () -> Unit, navController: NavController) {
             id = QUICK_MERGE_SORT_SCREEN,
             title = "Быстрая сортировка, слиянием",
             description = "",
-            categoryId = "search_sort",
+            categoryId = AlgorithmConstants.SEARCH_SORT,
             onClick = { navController.navigateWithHistory(QUICK_MERGE_SORT_SCREEN) }
         ),
         NavItem(
-            id = "insert_bubble",
+            id = AlgorithmConstants.INSERT_BUBBLE_SORT,
             title = "Сортировка вставками, пузырьком",
             description = "",
-            categoryId = "search_sort",
-            onClick = { navController.navigateWithHistory("insert_bubble") }
+            categoryId = AlgorithmConstants.SEARCH_SORT,
+            onClick = { navController.navigateWithHistory(AlgorithmConstants.INSERT_BUBBLE_SORT) }
         ),
         NavItem(
-            id = "binary_linear",
+            id = AlgorithmConstants.BINARY_LINEAR_SEARCH,
             title = "Бинарный поиск, линейный поиск",
             description = "",
-            categoryId = "search_sort",
-            onClick = { navController.navigateWithHistory("binary_linear") }
+            categoryId = AlgorithmConstants.SEARCH_SORT,
+            onClick = { navController.navigateWithHistory(AlgorithmConstants.BINARY_LINEAR_SEARCH) }
         ),
         NavItem(
-            id = "bfs_dfs",
+            id = AlgorithmConstants.BFS_DFS,
             title = "Поиск в ширину (BFS), в глубину (DFS)",
             description = "",
-            categoryId = "graph",
-            onClick = { navController.navigateWithHistory("bfs_dfs") }
+            categoryId = AlgorithmConstants.GRAPH,
+            onClick = { navController.navigateWithHistory(AlgorithmConstants.BFS_DFS) }
         ),
         NavItem(
-            id = "dijkstra_bellman_ford",
+            id = AlgorithmConstants.DIJKSTRA_BELLMAN_FORD,
             title = "Алгоритм Дейкстры, Беллмана-Форда",
             description = "",
-            categoryId = "graph",
-            onClick = { navController.navigateWithHistory("dijkstra_bellman_ford") }
+            categoryId = AlgorithmConstants.GRAPH,
+            onClick = { navController.navigateWithHistory(AlgorithmConstants.DIJKSTRA_BELLMAN_FORD) }
         ),
         NavItem(
-            id = "bridges_components",
+            id = AlgorithmConstants.BRIDGES_COMPONENTS,
             title = "Поиск мостов, компонент связности",
             description = "",
-            categoryId = "graph",
-            onClick = { navController.navigateWithHistory("bridges_components") }
+            categoryId = AlgorithmConstants.GRAPH,
+            onClick = { navController.navigateWithHistory(AlgorithmConstants.BRIDGES_COMPONENTS) }
         ),
         NavItem(
-            id = "floyd_warshall_prim",
+            id = AlgorithmConstants.FLOYD_WARSHALL_PRIM,
             title = "Алгоритм Флойда-Уоршелла, Прима",
             description = "",
-            categoryId = "graph",
-            onClick = { navController.navigateWithHistory("floyd_warshall_prim") }
+            categoryId = AlgorithmConstants.GRAPH,
+            onClick = { navController.navigateWithHistory(AlgorithmConstants.FLOYD_WARSHALL_PRIM) }
         )
     )
 

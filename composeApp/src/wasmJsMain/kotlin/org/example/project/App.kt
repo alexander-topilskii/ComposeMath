@@ -39,50 +39,52 @@ fun App() {
             }
 
             NavHost(navController = navController, startDestination = "home") {
-            composable("home") {
-                HomeScreen(
-                    onNavigateToDetails = { navController.navigateWithHistory("details") },
-                    onNavigateToFunction = { navController.navigateWithHistory("function") },
-                    onNavigateToExamples = { navController.navigateWithHistory("examples") },
-                    navController = navController
-                )
-            }
-            composable("details") {
-                DetailsScreen(onNavigateBack = { navigateBack() })
-            }
-            composable("function") {
-                FunctionDrawer(modifier = Modifier.fillMaxSize(), onBack = { navigateBack() })
-            }
-            composable("examples") {
-                ExamplesPage(onBack = { navigateBack() })
-            }
-            composable("algorithms") {
-                AlgorithmsPage(onBack = { navigateBack() }, navController = navController)
-            }
-            composable(QUICK_MERGE_SORT_SCREEN) {
-                QuickMergeSortScreen(onBack = { navigateBack() })
-            }
-            composable("insert_bubble") {
-                InsertBubbleSortScreen(onBack = { navigateBack() })
-            }
-            composable("binary_linear") {
-                BinaryLinearSearchScreen(onBack = { navigateBack() })
-            }
-            composable("bfs_dfs") {
-                BfsDfsScreen(onBack = { navigateBack() })
-            }
-            composable("dijkstra_bellman_ford") {
-                DijkstraBellmanFordScreen(onBack = { navigateBack() })
-            }
-            composable("bridges_components") {
-                BridgesComponentsScreen(onBack = { navigateBack() })
-            }
-            composable("floyd_warshall_prim") {
-                FloydWarshallPrimScreen(onBack = { navigateBack() })
-            }
-            composable("calculator") {
-                CalculatorScreen(onBack = { navigateBack() })
-            }
+                composable("home") {
+                    HomeScreen(
+                        onNavigateToDetails = { navController.navigateWithHistory("details") },
+                        onNavigateToFunction = { navController.navigateWithHistory("function") },
+                        onNavigateToExamples = { navController.navigateWithHistory("examples") },
+                        navController = navController
+                    )
+                }
+                composable("details") {
+                    DetailsScreen(onNavigateBack = { navigateBack() })
+                }
+                composable("function") {
+                    FunctionDrawer(modifier = Modifier.fillMaxSize(), onBack = { navigateBack() })
+                }
+                composable("examples") {
+                    ExamplesPage(onBack = { navigateBack() })
+                }
+                composable("algorithms") {
+                    AlgorithmsPage(onBack = { navigateBack() }, navController = navController)
+                }
+                //Region Algorithms
+                composable(QUICK_MERGE_SORT_SCREEN) {
+                    QuickMergeSortScreen(onBack = { navigateBack() })
+                }
+                composable(AlgorithmConstants.INSERT_BUBBLE_SORT) {
+                    InsertBubbleSortScreen(onBack = { navigateBack() })
+                }
+                composable(AlgorithmConstants.BINARY_LINEAR_SEARCH) {
+                    BinaryLinearSearchScreen(onBack = { navigateBack() })
+                }
+                composable(AlgorithmConstants.BFS_DFS) {
+                    BfsDfsScreen(onBack = { navigateBack() })
+                }
+                composable(AlgorithmConstants.DIJKSTRA_BELLMAN_FORD) {
+                    DijkstraBellmanFordScreen(onBack = { navigateBack() })
+                }
+                composable(AlgorithmConstants.BRIDGES_COMPONENTS) {
+                    BridgesComponentsScreen(onBack = { navigateBack() })
+                }
+                composable(AlgorithmConstants.FLOYD_WARSHALL_PRIM) {
+                    FloydWarshallPrimScreen(onBack = { navigateBack() })
+                }
+                // #EndRegion
+                composable("calculator") {
+                    CalculatorScreen(onBack = { navigateBack() })
+                }
             }
         }
     }
