@@ -14,6 +14,8 @@ import org.example.project.navigation.navigateBack
 import org.example.project.navigation.navigateWithHistory
 import org.example.project.screens.FunctionDrawer
 import org.example.project.screens.algorithms.*
+import org.example.project.screens.algorithms.linear_algorithms.QUICK_MERGE_SORT_SCREEN
+import org.example.project.screens.algorithms.linear_algorithms.QuickMergeSortScreen
 import org.example.project.screens.calculator.CalculatorScreen
 import org.example.project.screens.details.DetailsScreen
 import org.example.project.screens.examples.ExamplesPage
@@ -57,7 +59,7 @@ fun App() {
             composable("algorithms") {
                 AlgorithmsPage(onBack = { navigateBack() }, navController = navController)
             }
-            composable("quick_merge") {
+            composable(QUICK_MERGE_SORT_SCREEN) {
                 QuickMergeSortScreen(onBack = { navigateBack() })
             }
             composable("insert_bubble") {

@@ -13,6 +13,7 @@ import org.example.project.components.NavCategory
 import org.example.project.components.NavItem
 import org.example.project.components.NavigationTemplate
 import org.example.project.navigation.navigateWithHistory
+import org.example.project.screens.algorithms.linear_algorithms.QUICK_MERGE_SORT_SCREEN
 
 @Composable
 fun AlgorithmsPage(onBack: () -> Unit, navController: NavController) {
@@ -23,11 +24,11 @@ fun AlgorithmsPage(onBack: () -> Unit, navController: NavController) {
 
     val navItems = listOf(
         NavItem(
-            id = "quick_merge",
+            id = QUICK_MERGE_SORT_SCREEN,
             title = "Быстрая сортировка, слиянием",
             description = "",
             categoryId = "search_sort",
-            onClick = { navController.navigateWithHistory("quick_merge") }
+            onClick = { navController.navigateWithHistory(QUICK_MERGE_SORT_SCREEN) }
         ),
         NavItem(
             id = "insert_bubble",
@@ -104,9 +105,6 @@ fun AlgorithmPlaceholderScreen(title: String, onBack: () -> Unit) {
         }
     }
 }
-
-@Composable
-fun QuickMergeSortScreen(onBack: () -> Unit) = AlgorithmPlaceholderScreen("Быстрая сортировка, слиянием", onBack)
 
 @Composable
 fun InsertBubbleSortScreen(onBack: () -> Unit) = AlgorithmPlaceholderScreen("Сортировка вставками, пузырьком", onBack)
