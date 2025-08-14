@@ -18,7 +18,7 @@ import org.example.project.screens.algorithms.linear_algorithms.QUICK_MERGE_SORT
 @Composable
 fun AlgorithmsPage(onBack: () -> Unit, navController: NavController) {
     val categories = listOf(
-        NavCategory("search_sort", "Алгоритмы поиска и сортировки", Color(0xFFEC407A)),
+        NavCategory("search_sort", "Линейные алгоритмы", Color(0xFFEC407A)),
         NavCategory("graph", "Графовые алгоритмы", Color(0xFF7E57C2))
     )
 

@@ -35,10 +35,10 @@ fun HomeScreen(
 
     // Define categories with distinct colors
     val categories = listOf(
+        NavCategory("algorithms", "Алгоритмы", Color(0xFF42A5F5)),
         NavCategory("demos", "Demo Pages", Color(0xFF5B8EDB)),
         NavCategory("tools", "Interactive Tools", Color(0xFF26A69A)),
-        NavCategory("examples", "Examples", Color(0xFFEF6C00)),
-        NavCategory("algorithms", "Алгоритмы", Color(0xFF42A5F5))
+        NavCategory("examples", "Examples", Color(0xFFEF6C00))
     )
 
     // Function to derive a shade from category color
@@ -62,6 +62,13 @@ fun HomeScreen(
 
     // Define navigation cards with their categories and derived colors
     val navCards = listOf(
+        NavItem(
+            id = "algorithms",
+            title = "Алгоритмы",
+            description = "Навигация по алгоритмам",
+            categoryId = "algorithms",
+            onClick = { navController?.navigateWithHistory("algorithms") }
+        ),
         NavItem(
             id = "details",
             title = "Details Page",
@@ -104,13 +111,6 @@ fun HomeScreen(
             categoryId = "examples",
             onClick = { /* TODO */ }
         ),
-        NavItem(
-            id = "algorithms",
-            title = "Алгоритмы",
-            description = "Навигация по алгоритмам",
-            categoryId = "algorithms",
-            onClick = { navController?.navigateWithHistory("algorithms") }
-        )
     )
 
     // State for selected categories (multi-select)
