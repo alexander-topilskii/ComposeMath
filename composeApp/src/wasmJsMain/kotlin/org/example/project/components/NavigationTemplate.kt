@@ -11,14 +11,13 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 
 /**
  * Data class representing a navigation card
@@ -28,7 +27,7 @@ data class NavItem(
     val title: String,
     val description: String,
     val categoryId: String,
-    val onClick: () -> Unit
+    val page: @Composable () -> Unit = {}
 )
 
 /**
@@ -58,7 +57,8 @@ fun NavigationTemplate(
     items: List<NavItem>,
     onBack: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
-    selectedContent: @Composable () -> Unit
+    selectedContent: @Composable () -> Unit,
+    navController: NavHostController
 ) {
     val density = LocalDensity.current
     var screenWidth by remember { mutableStateOf(0.dp) }
@@ -107,9 +107,7 @@ fun NavigationTemplate(
         }
     ) { padding ->
         selectedContent()
-        if (selectedItem != null && selectedContent != null) {
-
-        } else {
+        if (selectedItem == null) {
             // Default navigation layout
             Column(
                 modifier = modifier
@@ -201,10 +199,11 @@ fun NavigationTemplate(
                                     ) {
                                         items(categoryItems) { item ->
                                             NavigationCard(
-                                                item = item.copy(onClick = {
+                                                item = item,
+                                                onClick = {
                                                     selectedItem = item
-                                                    item.onClick()
-                                                }),
+                                                    navController.navigate(item.id)
+                                                },
                                                 categoryColor = category.color
                                             )
                                         }
@@ -227,7 +226,8 @@ fun NavigationTemplate(
 @Composable
 private fun NavigationCard(
     item: NavItem,
-    categoryColor: Color
+    categoryColor: Color,
+    onClick: () -> Unit = {}
 ) {
     // Generate a unique shade based on the item ID
     val cardColor = remember(item.id) {
@@ -253,7 +253,7 @@ private fun NavigationCard(
     }
 
     Card(
-        onClick = item.onClick,
+        onClick = onClick,
         modifier = Modifier
             .fillMaxWidth()
             .height(150.dp),

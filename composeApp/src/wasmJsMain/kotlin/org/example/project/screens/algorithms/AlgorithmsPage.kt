@@ -14,24 +14,15 @@ import androidx.navigation.compose.rememberNavController
 import org.example.project.components.NavCategory
 import org.example.project.components.NavItem
 import org.example.project.components.NavigationTemplate
-import org.example.project.navigation.navigateWithHistory
-import org.example.project.screens.algorithms.linear_algorithms.TWO_POINTERS_SCREEN_GEM
-import org.example.project.screens.algorithms.linear_algorithms.TWO_POINTERS_SCREEN_GROK
 
 object AlgorithmConstants {
     const val LINEAR_ALGORITHMS_CATEGORY = "linear algorithms"
     const val GRAPH = "graph"
 
-    const val INSERT_BUBBLE_SORT = "insert_bubble"
-    const val BINARY_LINEAR_SEARCH = "binary_linear"
-    const val BFS_DFS = "bfs_dfs"
-    const val DIJKSTRA_BELLMAN_FORD = "dijkstra_bellman_ford"
-    const val BRIDGES_COMPONENTS = "bridges_components"
-    const val FLOYD_WARSHALL_PRIM = "floyd_warshall_prim"
 }
 
 @Composable
-fun AlgorithmsPage(onBack: () -> Unit, pages: List<Pair<String, @Composable () -> Unit>>, startDestination: String) {
+fun AlgorithmsPage(onBack: () -> Unit, pages: List<NavItem>, startDestination: String) {
     val navController = rememberNavController()
 
     val categories = listOf(
@@ -39,85 +30,22 @@ fun AlgorithmsPage(onBack: () -> Unit, pages: List<Pair<String, @Composable () -
         NavCategory(AlgorithmConstants.GRAPH, "Графовые алгоритмы", Color(0xFF7E57C2))
     )
 
-    val navItems = listOf(
-        NavItem(
-            id = startDestination,
-            title = "Быстрая сортировка, слиянием",
-            description = "",
-            categoryId = AlgorithmConstants.LINEAR_ALGORITHMS_CATEGORY,
-            onClick = { navController.navigateWithHistory(startDestination) }
-        ), NavItem(
-            id = TWO_POINTERS_SCREEN_GEM,
-            title = "TwoPointersScreen gem",
-            description = "",
-            categoryId = AlgorithmConstants.LINEAR_ALGORITHMS_CATEGORY,
-            onClick = { navController.navigateWithHistory(TWO_POINTERS_SCREEN_GEM) }
-        ),NavItem(
-            id = TWO_POINTERS_SCREEN_GROK,
-            title = "TwoPointersScreen grok",
-            description = "",
-            categoryId = AlgorithmConstants.LINEAR_ALGORITHMS_CATEGORY,
-            onClick = { navController.navigateWithHistory(TWO_POINTERS_SCREEN_GROK) }
-        ),
-        NavItem(
-            id = AlgorithmConstants.INSERT_BUBBLE_SORT,
-            title = "Сортировка вставками, пузырьком",
-            description = "",
-            categoryId = AlgorithmConstants.LINEAR_ALGORITHMS_CATEGORY,
-            onClick = { navController.navigateWithHistory(AlgorithmConstants.INSERT_BUBBLE_SORT) }
-        ),
-        NavItem(
-            id = AlgorithmConstants.BINARY_LINEAR_SEARCH,
-            title = "Бинарный поиск, линейный поиск",
-            description = "",
-            categoryId = AlgorithmConstants.LINEAR_ALGORITHMS_CATEGORY,
-            onClick = { navController.navigateWithHistory(AlgorithmConstants.BINARY_LINEAR_SEARCH) }
-        ),
-        NavItem(
-            id = AlgorithmConstants.BFS_DFS,
-            title = "Поиск в ширину (BFS), в глубину (DFS)",
-            description = "",
-            categoryId = AlgorithmConstants.GRAPH,
-            onClick = { navController.navigateWithHistory(AlgorithmConstants.BFS_DFS) }
-        ),
-        NavItem(
-            id = AlgorithmConstants.DIJKSTRA_BELLMAN_FORD,
-            title = "Алгоритм Дейкстры, Беллмана-Форда",
-            description = "",
-            categoryId = AlgorithmConstants.GRAPH,
-            onClick = { navController.navigateWithHistory(AlgorithmConstants.DIJKSTRA_BELLMAN_FORD) }
-        ),
-        NavItem(
-            id = AlgorithmConstants.BRIDGES_COMPONENTS,
-            title = "Поиск мостов, компонент связности",
-            description = "",
-            categoryId = AlgorithmConstants.GRAPH,
-            onClick = { navController.navigateWithHistory(AlgorithmConstants.BRIDGES_COMPONENTS) }
-        ),
-        NavItem(
-            id = AlgorithmConstants.FLOYD_WARSHALL_PRIM,
-            title = "Алгоритм Флойда-Уоршелла, Прима",
-            description = "",
-            categoryId = AlgorithmConstants.GRAPH,
-            onClick = { navController.navigateWithHistory(AlgorithmConstants.FLOYD_WARSHALL_PRIM) }
-        )
-    )
-
     NavigationTemplate(
         title = "Алгоритмы",
         categories = categories,
-        items = navItems,
-        onBack = onBack
-    ) {
-        NavHost(navController = navController, startDestination = startDestination) {
-            pages.forEach { (route, page) ->
-                println("Intag: noclass:AlgorithmsPage: $route $page")
-                composable(route) {
-                    page()
+        items = pages,
+        onBack = onBack,
+        selectedContent = {
+            NavHost(navController = navController, startDestination = startDestination) {
+                pages.forEach { page ->
+                    composable(page.id) {
+                        page.page()
+                    }
                 }
             }
-        }
-    }
+        },
+        navController = navController
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -143,27 +71,3 @@ fun AlgorithmPlaceholderScreen(title: String, onBack: () -> Unit) {
         }
     }
 }
-
-@Composable
-fun InsertBubbleSortScreen(onBack: () -> Unit) =
-    AlgorithmPlaceholderScreen("Сортировка вставками, пузырьком", onBack)
-
-@Composable
-fun BinaryLinearSearchScreen(onBack: () -> Unit) =
-    AlgorithmPlaceholderScreen("Бинарный поиск, линейный поиск", onBack)
-
-@Composable
-fun BfsDfsScreen(onBack: () -> Unit) = AlgorithmPlaceholderScreen("Поиск в ширину (BFS), в глубину (DFS)", onBack)
-
-@Composable
-fun DijkstraBellmanFordScreen(onBack: () -> Unit) =
-    AlgorithmPlaceholderScreen("Алгоритм Дейкстры, Беллмана-Форда", onBack)
-
-@Composable
-fun BridgesComponentsScreen(onBack: () -> Unit) =
-    AlgorithmPlaceholderScreen("Поиск мостов, компонент связности", onBack)
-
-@Composable
-fun FloydWarshallPrimScreen(onBack: () -> Unit) =
-    AlgorithmPlaceholderScreen("Алгоритм Флойда-Уоршелла, Прима", onBack)
-
