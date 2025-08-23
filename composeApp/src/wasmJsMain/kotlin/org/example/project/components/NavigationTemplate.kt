@@ -18,6 +18,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import org.example.project.navigation.navigateBack
+import org.example.project.screens.algorithms.NavPagePage
 
 /**
  * Data class representing a navigation card
@@ -26,8 +28,9 @@ data class NavItem(
     val id: String,
     val title: String,
     val description: String,
-    val categoryId: String,
-    val page: @Composable () -> Unit = {}
+    val category: NavCategory,
+    val pages: List<NavItem> = emptyList(),
+    val page: @Composable () -> Unit = { NavPagePage(onBack = { navigateBack() }, pages) }
 )
 
 /**
@@ -80,11 +83,11 @@ fun NavigationTemplate(
     val filteredItems = if (selectedCategories.isEmpty() || selectedCategories.none { it.value }) {
         items
     } else {
-        items.filter { item -> selectedCategories[item.categoryId] == true }
+        items.filter { item -> selectedCategories[item.category.id] == true }
     }
 
     // Group items by category
-    val groupedItems = filteredItems.groupBy { it.categoryId }
+    val groupedItems = filteredItems.groupBy { it.category.id }
 
     Scaffold(
         topBar = {

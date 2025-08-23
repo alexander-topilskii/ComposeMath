@@ -7,11 +7,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import org.example.project.components.NavCategory
 import org.example.project.components.NavItem
 import org.example.project.components.NavigationTemplate
 
@@ -22,13 +20,10 @@ object AlgorithmConstants {
 }
 
 @Composable
-fun AlgorithmsPage(onBack: () -> Unit, pages: List<NavItem>, startDestination: String) {
+fun NavPagePage(onBack: () -> Unit, pages: List<NavItem>, startDestination: String? = null) {
     val navController = rememberNavController()
 
-    val categories = listOf(
-        NavCategory(AlgorithmConstants.LINEAR_ALGORITHMS_CATEGORY, "Линейные алгоритмы", Color(0xFFEC407A)),
-        NavCategory(AlgorithmConstants.GRAPH, "Графовые алгоритмы", Color(0xFF7E57C2))
-    )
+    val categories = pages.distinctBy { it.category }.map { it.category }
 
     NavigationTemplate(
         title = "Алгоритмы",
@@ -36,7 +31,7 @@ fun AlgorithmsPage(onBack: () -> Unit, pages: List<NavItem>, startDestination: S
         items = pages,
         onBack = onBack,
         selectedContent = {
-            NavHost(navController = navController, startDestination = startDestination) {
+            NavHost(navController = navController, startDestination = startDestination?: pages.first().id) {
                 pages.forEach { page ->
                     composable(page.id) {
                         page.page()
