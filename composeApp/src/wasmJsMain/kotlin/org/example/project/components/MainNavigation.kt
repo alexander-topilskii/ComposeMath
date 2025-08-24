@@ -13,7 +13,6 @@ fun NavPagePage(title: String, onBack: () -> Unit, pages: List<NavItem>, startDe
     val categories = pages.distinctBy { it.category }.map { it.category }
 
     NavigationTemplate(
-        title = title,
         categories = categories,
         items = pages,
         onBack = onBack,

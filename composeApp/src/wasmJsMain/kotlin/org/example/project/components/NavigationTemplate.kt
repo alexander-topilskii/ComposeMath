@@ -1,11 +1,14 @@
 package org.example.project.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -17,8 +20,11 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.times
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import org.example.project.navigation.navigateBack
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 /**
  * Data class representing a navigation card
@@ -47,6 +53,66 @@ data class NavCategory(
     val color: Color
 )
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Preview
+@Composable
+fun NavigationTemplate(
+    categories: List<NavCategory>,
+    items: List<NavItem>,
+    onBack: (() -> Unit)? = null,
+    modifier: Modifier = Modifier,
+    selectedContent: @Composable () -> Unit,
+    navController: NavHostController
+) {
+    Scaffold(
+        modifier = modifier.fillMaxSize()
+    ) { innerPadding ->
+        Row(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+        ) {
+            // Left navigation panel (categories + items)
+            Column(
+                modifier = Modifier
+                    .width(240.dp)
+                    .fillMaxHeight()
+                    .background(MaterialTheme.colorScheme.surfaceVariant)
+            ) {
+                categories.forEach { category ->
+                    Text(
+                        text = category.name,
+                        color = category.color,
+                        style = MaterialTheme.typography.titleMedium,
+                    )
+                    items.filter { it.category == category }.forEach { item ->
+                        NavigationDrawerItem(
+                            label = { Text(item.title) },
+                            selected = navController.currentDestination?.route == item.id,
+                            onClick = {
+                                navController.navigate(item.id) {
+                                    launchSingleTop = true
+                                    restoreState = true
+                                }
+                            },
+                        )
+                    }
+                }
+            }
+
+            // Right content (actual screen from NavHost)
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxHeight()
+            ) {
+                selectedContent()
+            }
+        }
+    }
+}
+
+
 /**
  * A reusable navigation template that can be used for creating navigation pages
  * with categorized items displayed as cards.
@@ -59,7 +125,7 @@ data class NavCategory(
  */
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
-fun NavigationTemplate(
+fun NavigationTemplate1(
     title: String,
     categories: List<NavCategory>,
     items: List<NavItem>,
