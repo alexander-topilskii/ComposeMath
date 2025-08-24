@@ -19,7 +19,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import org.example.project.navigation.navigateBack
-import org.example.project.screens.algorithms.NavPagePage
 
 /**
  * Data class representing a navigation card

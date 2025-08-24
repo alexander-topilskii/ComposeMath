@@ -1,8 +1,8 @@
 package org.example.project.compression
 
 import androidx.compose.runtime.Composable
-import org.example.project.screens.algorithms.AlgorithmPlaceholderScreen
+import org.example.project.components.PlaceholderScreen
 
 
 @Composable
-fun CompressionScreen(onBack: () -> Unit): Unit = AlgorithmPlaceholderScreen("алгоритмы сжатия", onBack)
+fun CompressionScreen(onBack: () -> Unit): Unit = PlaceholderScreen("алгоритмы сжатия", onBack)

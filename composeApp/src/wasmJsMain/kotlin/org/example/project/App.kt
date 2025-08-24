@@ -10,8 +10,8 @@ import kotlinx.browser.window
 import org.example.project.components.NavCategory
 import org.example.project.components.NavItem
 import org.example.project.compression.CompressionScreen
+import org.example.project.components.NavPagePage
 import org.example.project.navigation.navigateBack
-import org.example.project.screens.algorithms.NavPagePage
 import org.example.project.screens.algorithms.linear_algorithms.QuickMergeSortScreen
 import org.w3c.dom.events.Event
 
@@ -19,19 +19,11 @@ import org.w3c.dom.events.Event
 fun App() {
     MaterialTheme {
         SelectionContainer {
-            val navController = rememberNavController()
+            setupNavigation()
 
-            DisposableEffect(navController) {
-                val handler: (Event) -> Unit = {
-                    navController.popBackStack()
-                }
-                window.addEventListener("popstate", handler)
-                onDispose {
-                    window.removeEventListener("popstate", handler)
-                }
-            }
+            val algorytmsCategory = NavCategory("algorithms", "Algorithms", Color(0xFFEC407A))
+            val compressionCategory = NavCategory("compression", "Compression", Color(0xFF42A5F5))
 
-            val categorymain = NavCategory("mainpage", "MainPage", Color(0xFFEC407A))
 
             NavPagePage(
                 onBack = { navigateBack() },
@@ -40,13 +32,13 @@ fun App() {
                         id = "algos",
                         title = "Algos",
                         description = "Algos…",
-                        category = categorymain,
+                        category = algorytmsCategory,
                         pages = listOf(
                             NavItem(
                                 id = "QuickMergeSortScreen",
                                 title = "QuickMergeSortScreen",
                                 description = "QuickMergeSortScreen…",
-                                category = categorymain,
+                                category = algorytmsCategory,
                                 page = { QuickMergeSortScreen(onBack = { navigateBack() }) }
                             )
                         )
@@ -55,19 +47,34 @@ fun App() {
                         id = "compression",
                         title = "Compression",
                         description = "Compression…",
-                        category = categorymain,
+                        category = compressionCategory,
                         pages = listOf(
                             NavItem(
                                 id = "CompressionScreen",
                                 title = "Compression Algos",
                                 description = "…",
-                                category = categorymain,
+                                category = compressionCategory,
                                 page = { CompressionScreen(onBack = { navigateBack() }) }
                             )
                         )
                     )
                 ),
             )
+        }
+    }
+}
+
+@Composable
+fun setupNavigation() {
+    val navController = rememberNavController()
+
+    DisposableEffect(navController) {
+        val handler: (Event) -> Unit = {
+            navController.popBackStack()
+        }
+        window.addEventListener("popstate", handler)
+        onDispose {
+            window.removeEventListener("popstate", handler)
         }
     }
 }
