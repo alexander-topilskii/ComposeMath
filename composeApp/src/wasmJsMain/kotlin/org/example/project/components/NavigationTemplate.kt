@@ -29,7 +29,13 @@ data class NavItem(
     val description: String,
     val category: NavCategory,
     val pages: List<NavItem> = emptyList(),
-    val page: @Composable () -> Unit = { NavPagePage(onBack = { navigateBack() }, pages) }
+    val page: @Composable () -> Unit = {
+        NavPagePage(
+            title = category.name,
+            onBack = { navigateBack() },
+            pages = pages
+        )
+    }
 )
 
 /**
