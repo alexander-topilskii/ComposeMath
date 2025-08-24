@@ -1,5 +1,6 @@
 package org.example.project.components
 
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -14,6 +15,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
@@ -54,7 +56,27 @@ data class NavCategory(
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
-@Preview
+@Composable
+fun EmojiButton(
+    emoji: String,
+    contentDescription: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Text(
+        text = emoji,
+        modifier = modifier
+            .size(36.dp)
+            .clip(RoundedCornerShape(10.dp))
+            .background(MaterialTheme.colorScheme.surface)
+            .clickable(onClick = onClick)
+            .wrapContentSize(Alignment.Center),
+        style = MaterialTheme.typography.titleMedium,
+        textAlign = TextAlign.Center
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NavigationTemplate(
     categories: List<NavCategory>,
@@ -64,300 +86,159 @@ fun NavigationTemplate(
     selectedContent: @Composable () -> Unit,
     navController: NavHostController
 ) {
-    Scaffold(
-        modifier = modifier.fillMaxSize()
-    ) { innerPadding ->
+    val backStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = backStackEntry?.destination?.route
+
+    var isCollapsed by remember { mutableStateOf(false) }
+    val sidebarWidth by animateDpAsState(if (isCollapsed) 64.dp else 280.dp, label = "sidebarWidth")
+
+    Scaffold(modifier = modifier.fillMaxSize()) { innerPadding ->
         Row(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            // Left navigation panel (categories + items)
-            Column(
+            // Sidebar
+            Surface(
+                tonalElevation = 2.dp,
+                color = MaterialTheme.colorScheme.surfaceVariant,
                 modifier = Modifier
-                    .width(240.dp)
                     .fillMaxHeight()
-                    .background(MaterialTheme.colorScheme.surfaceVariant)
+                    .width(sidebarWidth)
             ) {
-                categories.forEach { category ->
-                    Text(
-                        text = category.name,
-                        color = category.color,
-                        style = MaterialTheme.typography.titleMedium,
-                    )
-                    items.filter { it.category == category }.forEach { item ->
-                        NavigationDrawerItem(
-                            label = { Text(item.title) },
-                            selected = navController.currentDestination?.route == item.id,
-                            onClick = {
-                                navController.navigate(item.id) {
-                                    launchSingleTop = true
-                                    restoreState = true
-                                }
-                            },
+                Column(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .padding(horizontal = if (isCollapsed) 8.dp else 12.dp, vertical = 12.dp)
+                ) {
+                    // Collapse / Expand (emoji)
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 8.dp)
+                    ) {
+                        EmojiButton(
+                            emoji = if (isCollapsed) "▶" else "◀",
+                            contentDescription = if (isCollapsed) "Expand menu" else "Collapse menu",
+                            onClick = { isCollapsed = !isCollapsed }
                         )
+
+                        if (!isCollapsed && onBack != null) {
+                            Spacer(Modifier.width(8.dp))
+                            // Back as emoji text
+                            Text(
+                                text = "← Back",
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(10.dp))
+                                    .clickable(onClick = onBack)
+                                    .padding(horizontal = 10.dp, vertical = 8.dp),
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                        }
+                    }
+
+                    Spacer(Modifier.height(4.dp))
+
+                    // Categories + Items
+                    LazyColumn(
+                        contentPadding = PaddingValues(
+                            start = if (isCollapsed) 0.dp else 4.dp,
+                            end = if (isCollapsed) 0.dp else 4.dp,
+                            top = 4.dp, bottom = 16.dp
+                        ),
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        categories.forEach { category ->
+                            item(key = "cat_header_${category.id}") {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(
+                                            start = if (isCollapsed) 4.dp else 4.dp,
+                                            end = if (isCollapsed) 4.dp else 8.dp,
+                                            top = 4.dp, bottom = 2.dp
+                                        )
+                                ) {
+                                    // category color dot replaced with emoji square for WASM safety
+                                    Text(
+                                        text = "■",
+                                        color = category.color,
+                                        modifier = Modifier.padding(end = if (isCollapsed) 0.dp else 8.dp)
+                                    )
+                                    if (!isCollapsed) {
+                                        Text(
+                                            text = category.name,
+                                            style = MaterialTheme.typography.titleSmall,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                                        )
+                                    }
+                                }
+                            }
+
+                            if (!isCollapsed) {
+                                val catItems = items.filter { it.category == category }
+                                items(
+                                    count = catItems.size,
+                                    key = { catItems[it].id }
+                                ) { idx ->
+                                    val item = catItems[idx]
+                                    NavigationDrawerItem(
+                                        label = {
+                                            Column(Modifier.padding(vertical = 6.dp)) {
+                                                Text(item.title, style = MaterialTheme.typography.bodyMedium)
+                                                if (item.description.isNotBlank()) {
+                                                    Spacer(Modifier.height(2.dp))
+                                                    Text(
+                                                        item.description,
+                                                        style = MaterialTheme.typography.bodySmall,
+                                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                                        maxLines = 2
+                                                    )
+                                                }
+                                            }
+                                        },
+                                        selected = currentRoute == item.id,
+                                        onClick = {
+                                            navController.navigate(item.id) {
+                                                launchSingleTop = true
+                                                restoreState = true
+                                            }
+                                        },
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .clip(RoundedCornerShape(12.dp))
+                                            .padding(horizontal = 4.dp)
+                                    )
+                                }
+                            }
+                        }
                     }
                 }
             }
 
-            // Right content (actual screen from NavHost)
+            // Content
             Box(
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxHeight()
+                    .padding(16.dp)
             ) {
-                selectedContent()
+                Surface(
+                    shape = RoundedCornerShape(16.dp),
+                    tonalElevation = 1.dp,
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    Box(Modifier.padding(16.dp)) {
+                        selectedContent()
+                    }
+                }
             }
         }
     }
 }
 
 
-/**
- * A reusable navigation template that can be used for creating navigation pages
- * with categorized items displayed as cards.
- *
- * @param title The title of the navigation page
- * @param categories List of categories to organize navigation items
- * @param items List of navigation items to display
- * @param onBack Callback for handling back navigation, null if it's a root page
- * @param modifier Modifier for the component
- */
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
-@Composable
-fun NavigationTemplate1(
-    title: String,
-    categories: List<NavCategory>,
-    items: List<NavItem>,
-    onBack: (() -> Unit)? = null,
-    modifier: Modifier = Modifier,
-    selectedContent: @Composable () -> Unit,
-    navController: NavHostController
-) {
-    val density = LocalDensity.current
-    var screenWidth by remember { mutableStateOf(0.dp) }
 
-    // State for selected categories (multi-select)
-    val selectedCategories = remember { mutableStateMapOf<String, Boolean>() }
-
-    // State for currently selected navigation item
-    var selectedItem by remember { mutableStateOf<NavItem?>(null) }
-
-    // Initialize with all categories selected
-    LaunchedEffect(Unit) {
-        categories.forEach { category ->
-            selectedCategories[category.id] = true
-        }
-    }
-
-    // Filter items based on selected categories
-    val filteredItems = if (selectedCategories.isEmpty() || selectedCategories.none { it.value }) {
-        items
-    } else {
-        items.filter { item -> selectedCategories[item.category.id] == true }
-    }
-
-    // Group items by category
-    val groupedItems = filteredItems.groupBy { it.category.id }
-
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text(title) },
-                navigationIcon = {
-                    onBack?.let {
-                        IconButton(onClick = {
-                            if (selectedItem != null) {
-                                selectedItem = null
-                            } else {
-                                onBack()
-                            }
-                        }) {
-                            Text("←")
-                        }
-                    }
-                }
-            )
-        }
-    ) { padding ->
-        selectedContent()
-        if (selectedItem == null) {
-            // Default navigation layout
-            Column(
-                modifier = modifier
-                    .fillMaxSize()
-                    .padding(padding)
-                    .onSizeChanged { size ->
-                        with(density) {
-                            screenWidth = size.width.toDp()
-                        }
-                    },
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                // Determine if mobile-like layout (< 768dp ~ tablets/phones)
-                val isMobile = screenWidth < 768.dp
-
-                // Category filter chips
-                Column(
-                    modifier = Modifier.fillMaxWidth().padding(16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    // Category filter row with colored chips
-                    FlowRow(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        categories.forEach { category ->
-                            val isSelected = selectedCategories[category.id] == true
-                            FilterChip(
-                                selected = isSelected,
-                                onClick = {
-                                    selectedCategories[category.id] = !isSelected
-                                },
-                                label = { Text(category.name) },
-                                colors = FilterChipDefaults.filterChipColors(
-                                    selectedContainerColor = category.color.copy(alpha = 0.7f),
-                                    selectedLabelColor = Color.White
-                                )
-                            )
-                        }
-                    }
-                }
-
-                // Cards grouped by category
-                LazyColumn(
-                    contentPadding = PaddingValues(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(24.dp),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    categories.forEach { category ->
-                        val categoryItems = groupedItems[category.id] ?: emptyList()
-
-                        if (categoryItems.isNotEmpty()) {
-                            item {
-                                Column {
-                                    // Category header
-                                    Row(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(bottom = 8.dp),
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        Box(
-                                            modifier = Modifier
-                                                .size(16.dp)
-                                                .background(category.color, RoundedCornerShape(4.dp))
-                                        )
-                                        Spacer(Modifier.width(8.dp))
-                                        Text(
-                                            text = category.name,
-                                            style = MaterialTheme.typography.titleLarge,
-                                            fontWeight = FontWeight.Bold
-                                        )
-                                    }
-
-                                    // Grid of cards for this category
-                                    LazyVerticalGrid(
-                                        columns = GridCells.Fixed(if (isMobile) 1 else 3),
-                                        horizontalArrangement = Arrangement.spacedBy(16.dp),
-                                        verticalArrangement = Arrangement.spacedBy(16.dp),
-                                        userScrollEnabled = false,  // Prevent nested scrolling
-                                        modifier = Modifier.height(
-                                            if (isMobile) {
-                                                (categoryItems.size * 150).dp
-                                            } else {
-                                                ((categoryItems.size + 2) / 3 * 150).dp
-                                            }
-                                        )
-                                    ) {
-                                        items(categoryItems) { item ->
-                                            NavigationCard(
-                                                item = item,
-                                                onClick = {
-                                                    selectedItem = item
-                                                    navController.navigate(item.id)
-                                                },
-                                                categoryColor = category.color
-                                            )
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-        }
-    }
-}
-
-/**
- * A card component for displaying a navigation item with styling based on its category color
- */
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun NavigationCard(
-    item: NavItem,
-    categoryColor: Color,
-    onClick: () -> Unit = {}
-) {
-    // Generate a unique shade based on the item ID
-    val cardColor = remember(item.id) {
-        // Create a variation of the category color
-        val hashValue = item.id.hashCode()
-        val lightnessAdjust = (hashValue % 30) / 100f  // -0.3 to 0.3 adjustment
-
-        // Simple way to lighten/darken
-        val factor = 1f + lightnessAdjust
-        Color(
-            red = (categoryColor.red * factor).coerceIn(0f, 1f),
-            green = (categoryColor.green * factor).coerceIn(0f, 1f),
-            blue = (categoryColor.blue * factor).coerceIn(0f, 1f),
-            alpha = categoryColor.alpha
-        )
-    }
-
-    // Determine text color based on background brightness
-    val textColor = if ((cardColor.red * 0.299 + cardColor.green * 0.587 + cardColor.blue * 0.114) > 0.5) {
-        Color.Black
-    } else {
-        Color.White
-    }
-
-    Card(
-        onClick = onClick,
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(150.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-        colors = CardDefaults.cardColors(containerColor = cardColor)
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = item.title,
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center,
-                color = textColor
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Text(
-                text = item.description,
-                style = MaterialTheme.typography.bodyMedium,
-                textAlign = TextAlign.Center,
-                color = textColor.copy(alpha = 0.8f),
-                modifier = Modifier.fillMaxWidth()
-            )
-        }
-    }
-}
