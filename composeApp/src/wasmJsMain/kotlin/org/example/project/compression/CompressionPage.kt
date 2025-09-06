@@ -122,7 +122,26 @@ fun CompressionStateCard(
                     style = MaterialTheme.typography.bodyMedium
                 )
                 Text(
-                    text = "Size: ${state.outputSize} bytes",
+                    text = "Size: ${state.outputSize} chars",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+
+            // Decoded block
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(12.dp))
+                    .padding(12.dp)
+            ) {
+                Text("Decoded:", style = MaterialTheme.typography.labelMedium)
+                Text(
+                    text = state.decoded.ifEmpty { "—" },
+                    style = MaterialTheme.typography.bodyMedium
+                )
+                Text(
+                    text = "Size: ${state.decodedSize} chars",
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
