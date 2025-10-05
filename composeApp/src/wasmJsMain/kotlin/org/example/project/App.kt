@@ -35,8 +35,6 @@ fun App() {
                 pages = navList {
                     category(
                         category = numericMethodsCategory,
-                        id = "Numeric Methods",
-                        title = "Numeric Methods",
                         description = "https://youtu.be/8JVHfRv7fyo?si=KMluYhO6rLgTWcvy"
                     ) {
                         leaf(
@@ -49,8 +47,6 @@ fun App() {
 
                     category(
                         category = algorytmsCategory,
-                        id = "algos",
-                        title = "Algos",
                         description = "Algos…"
                     ) {
                         leaf(
@@ -63,8 +59,6 @@ fun App() {
 
                     category(
                         category = compressionCategory,
-                        id = "compression",
-                        title = "Compression",
                         description = "Compression…"
                     ) {
                         leaf(

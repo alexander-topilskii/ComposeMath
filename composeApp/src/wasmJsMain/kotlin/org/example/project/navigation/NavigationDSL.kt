@@ -15,15 +15,14 @@ class NavListBuilder {
 
     /**
      * Define a top-level category containing nested items.
+     * Category id and title are taken from NavCategory to avoid duplication.
      */
     fun category(
         category: NavCategory,
-        id: String,
-        title: String,
-        description: String,
+        description: String = "",
         build: NavCategoryBuilder.() -> Unit
     ) {
-        val cat = NavCategoryBuilder(category, id, title, description)
+        val cat = NavCategoryBuilder(category, description)
             .apply(build)
             .toNavItem()
         items += cat
@@ -56,8 +55,6 @@ class NavListBuilder {
  */
 class NavCategoryBuilder(
     private val category: NavCategory,
-    private val id: String,
-    private val title: String,
     private val description: String
 ) {
     private val children = mutableListOf<NavItem>()
@@ -77,22 +74,23 @@ class NavCategoryBuilder(
         )
     }
 
+    /**
+     * Define a nested category. Its id and title are taken from the provided NavCategory.
+     */
     fun category(
-        category: NavCategory = this.category,
-        id: String,
-        title: String,
-        description: String,
+        category: NavCategory,
+        description: String = "",
         build: NavCategoryBuilder.() -> Unit
     ) {
-        val sub = NavCategoryBuilder(category, id, title, description)
+        val sub = NavCategoryBuilder(category, description)
             .apply(build)
             .toNavItem()
         children += sub
     }
 
     internal fun toNavItem(): NavItem = NavItem(
-        id = id,
-        title = title,
+        id = category.id,
+        title = category.name,
         description = description,
         category = category,
         pages = children
