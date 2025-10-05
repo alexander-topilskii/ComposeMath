@@ -40,11 +40,14 @@ class CompressionViewModel : ViewModel() {
         viewModelScope.launch {
             val result = compress(_uiState.value.inputText)
             val decoded = decoder(result)
+            val inputSizeDouble = _uiState.value.inputSize.toDouble()
+            val resultLength = result.length
+            val rate = if (resultLength > 0) inputSizeDouble / resultLength else 0.0
             _uiState.update {
                 it.copy(
                     outputText = result,
-                    outputSize = result.length.toString(),
-                    compressRate = ((_uiState.value.inputSize.toDouble() / result.length.toDouble())).toString(),
+                    outputSize = resultLength.toString(),
+                    compressRate = rate.toString(),
                     decoded = decoded,
                     decodedSize = decoded.length.toString()
                 )
@@ -80,19 +83,26 @@ class CompressionViewModel : ViewModel() {
         var output = ""
         var currentSymbol: Char? = null
         var characterSize:Int = 0
+        var i = 0 // Initialize i as mutable variable
 
-        for (i in input.indices) {
-            val isNotDigit = !input[i].isDigit()
-            if (isNotDigit) {
+        while (i < input.length) {
+            if (!input[i].isDigit()) {
                 currentSymbol = input[i]
-                for (j in i+1 until input.length-1) {
-                    val isNotDigit = !input[j].isDigit()
-                    if (isNotDigit) {
-                        characterSize = input.substring(i+1,j-1).toInt()
-                        break
-                    }
+                var j = i + 1
+                // Reset characterSize for the next run-length
+                characterSize = 0
+                while (j < input.length && input[j].isDigit()) {
+                    // Accumulate digit characters into an integer
+                    characterSize = characterSize * 10 + (input[j] - '0')
+                    j++
                 }
-                output += currentSymbol.toString().repeat(characterSize)
+                if (characterSize > 0) {
+                    output += currentSymbol.toString().repeat(characterSize)
+                }
+                i = j - 1 // Move index to the end of the digit sequence
+            } else {
+                // Handle the case when the character is a digit (this should not happen in valid input)
+                i++
             }
         }
 
