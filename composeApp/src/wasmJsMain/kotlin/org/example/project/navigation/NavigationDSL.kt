@@ -74,20 +74,6 @@ class NavCategoryBuilder(
         )
     }
 
-    /**
-     * Define a nested category. Its id and title are taken from the provided NavCategory.
-     */
-    fun category(
-        category: NavCategory,
-        description: String = "",
-        build: NavCategoryBuilder.() -> Unit
-    ) {
-        val sub = NavCategoryBuilder(category, description)
-            .apply(build)
-            .toNavItem()
-        children += sub
-    }
-
     internal fun toNavItem(): NavItem = NavItem(
         id = category.id,
         title = category.name,
