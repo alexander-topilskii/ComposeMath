@@ -1,6 +1,7 @@
 package org.example.project.compression
 
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -19,7 +20,7 @@ data class CompressionState(
 class CompressionViewModel : ViewModel() {
 
     private val _uiState = MutableStateFlow(CompressionState())
-    val uiState = _uiState.asStateFlow()
+    val uiState: StateFlow<CompressionState> = _uiState.asStateFlow()
 
     init {
         onInputTextChanged(_uiState.value.inputText)

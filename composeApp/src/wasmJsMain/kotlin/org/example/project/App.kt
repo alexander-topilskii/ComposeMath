@@ -13,6 +13,7 @@ import org.example.project.compression.CompressionScreen
 import org.example.project.components.NavPagePage
 import org.example.project.compression.CompressionRLE
 import org.example.project.navigation.navigateBack
+import org.example.project.numeric_methods.LinearMethodScreen
 import org.example.project.screens.algorithms.linear_algorithms.QuickMergeSortScreen
 import org.w3c.dom.events.Event
 
@@ -24,12 +25,28 @@ fun App() {
 
             val algorytmsCategory = NavCategory("algorithms", "Algorithms", Color(0xFFEC407A))
             val compressionCategory = NavCategory("compression", "Compression", Color(0xFF42A5F5))
+            val numericMethodsCategory = NavCategory("Numeric Methods", "Численные методы", Color(0xFF42A5F5))
 
 
             NavPagePage(
                 title = "Main page",
                 onBack = { navigateBack() },
                 pages = listOf(
+                    NavItem(
+                        id = "Numeric Methods",
+                        title = "Numeric Methods",
+                        description = "https://youtu.be/8JVHfRv7fyo?si=KMluYhO6rLgTWcvy",
+                        category = numericMethodsCategory,
+                        pages = listOf(
+                            NavItem(
+                                id = "Numeric Methods",
+                                title = "Численные методы",
+                                description = "https://youtu.be/8JVHfRv7fyo?si=KMluYhO6rLgTWcvy",
+                                category = numericMethodsCategory,
+                                page = { LinearMethodScreen(onBack = { navigateBack() }) }
+                            ),
+                        )
+                    ),
                     NavItem(
                         id = "algos",
                         title = "Algos",
